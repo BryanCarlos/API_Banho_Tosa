@@ -50,7 +50,7 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 
 **1. Clone o repositório:**
 ```bash
-git clone https://github.com/BryanCarlos/APIBanho_Tosa.git
+git clone https://github.com/BryanCarlos/API_Banho_Tosa.git
 ```
 
 **2. Navegue para a pasta do projeto da API:**
