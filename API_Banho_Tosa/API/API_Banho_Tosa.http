@@ -1,0 +1,146 @@
+@hostname = localhost
+@port = 8080
+@host = https://{{hostname}}:{{port}}
+
+// ------------------------------------ Valid requests ------------------------------------
+
+POST {{host}}/api/owners
+Content-Type: application/json
+
+{
+  "name": "Bryan Silva",
+  "phone": "41 99988-1122",
+  "address": "Rua Torta, 123"
+}
+
+###
+
+POST {{host}}/api/owners
+Content-Type: application/json
+
+{
+  "name": "Jhenifer Krensh",
+  "phone": "41 98765-4321"
+}
+
+###
+
+POST {{host}}/api/owners
+Content-Type: application/json
+
+{
+  "name": "Murillo Silva"
+}
+
+###
+
+GET {{host}}/api/owners
+Accept: application/json
+
+###
+
+GET {{host}}/api/owners?name=bryan
+Accept: application/json
+
+###
+
+GET {{host}}/api/owners?phone=41112233445
+Accept: application/json
+
+###
+
+GET {{host}}/api/owners?name=jhenifer&phone=41112233445
+Accept: application/json
+
+###
+
+GET {{host}}/api/owners/a282754a-c254-4111-8993-07893c1c5b2d
+Accept: application/json
+
+###
+
+GET {{host}}/api/owners/full_info
+Accept: application/json
+
+###
+
+GET {{host}}/api/owners/archived
+Accept: application/json
+
+###
+
+PATCH {{host}}/api/owners/041b87d4-c838-4e28-84d7-7c96e88c730c/reactivate
+Accept: application/json
+
+###
+
+PUT {{host}}/api/owners/a282754a-c254-4111-8993-07893c1c5b2d
+Content-Type: application/json
+
+{
+  "name": "Jhenifer Krensh",
+  "phone": "41 11223-3445",
+  "address": "Rua ABC, 1234"
+}
+
+###
+
+PUT {{host}}/api/owners/882bbe92-15c5-47b1-bcfb-ee3235d9042f
+Content-Type: application/json
+
+{
+  "name": "Murillo Silva",
+  "phone": "41 90102-0304"
+}
+
+###
+
+DELETE {{host}}/api/owners/041b87d4-c838-4e28-84d7-7c96e88c730c
+
+###
+
+// ------------------------------------ Bad requests ------------------------------------
+
+POST {{host}}/api/owners
+Content-Type: application/json
+
+{
+  "phone": "1234"
+}
+
+###
+
+POST {{host}}/api/owners
+Content-Type: application/json
+
+{
+  "name": "Name to fail phone",
+  "phone": "abc"
+}
+
+###
+
+POST {{host}}/api/owners
+Content-Type: application/json
+
+{
+  "name": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse in pharetra sapien. Mauris a facilisis metus. Nam dapibus sagittis mollis. Mauris sollicitudin justo sed justo scelerisque finibus. Aliquam pharetra nisi et sem lacinia pharetra. Sed auctor, diam sed ornare faucibus, nunc lorem tristique est, vel suscipit tellus dolor eu ligula. Curabitur semper orci sed ante efficitur vehicula. Pellentesque imperdiet sed quam vel interdum. Nullam cursus neque orci, vel tristique lacus sollicitudin eu. Nulla ac lorem vel massa blandit accumsan."
+}
+
+###
+
+GET {{host}}/api/owners/123abc45-c838-4e28-84d7-7c96e88c730c
+Accept: application/json
+
+###
+
+// This request will fail if the informed owner is already active.
+
+PATCH {{host}}/api/owners/041b87d4-c838-4e28-84d7-7c96e88c730c/reactivate
+Accept: application/json
+
+###
+
+// This request will fail if the informed owner is alreary deleted.
+
+DELETE {{host}}/api/owners/041b87d4-c838-4e28-84d7-7c96e88c730c
