@@ -42,8 +42,14 @@ Siga os passos abaixo para configurar e executar o projeto localmente.
 
 ### Pré-requisitos
 
-* [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-* [PostgreSQL](https://www.postgresql.org/download/) (ou uma instância rodando via Docker)
+Antes de começar, garanta que você tem os seguintes softwares instalados:
+
+* **[.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)**
+* **[PostgreSQL](https://www.postgresql.org/download/)**
+* **EF Core Tools:** A ferramenta de linha de comando do Entity Framework. Instale-a (ou atualize-a) com o seguinte comando no seu terminal:
+  ```bash
+  dotnet tool install --global dotnet-ef
+  ```
 * Uma IDE de sua preferência (Visual Studio, VS Code, Rider)
 
 ### 🔧 Instalação e Configuração
