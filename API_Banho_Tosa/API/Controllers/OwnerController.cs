@@ -1,6 +1,5 @@
-﻿using API_Banho_Tosa.Application.Owners;
-using API_Banho_Tosa.Application.Owners.DTOs;
-using API_Banho_Tosa.Infrastructure.Persistence.Repositories;
+﻿using API_Banho_Tosa.Application.Owners.DTOs;
+using API_Banho_Tosa.Application.Owners.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers

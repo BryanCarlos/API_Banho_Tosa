@@ -3,6 +3,7 @@ using System;
 using API_Banho_Tosa.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_Banho_Tosa.Migrations
 {
     [DbContext(typeof(BanhoTosaContext))]
-    partial class BanhoTosaContextModelSnapshot : ModelSnapshot
+    [Migration("20250827023234_AddAnimalTypeEntity")]
+    partial class AddAnimalTypeEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,0 +1,75 @@
+// ------------------------------------ Valid requests ------------------------------------
+
+POST {{host}}/api/animal-types
+Content-Type: application/json
+
+{
+  "name": "Cavalo"
+}
+
+###
+
+GET {{host}}/api/animal-types
+Accept: application/json
+
+###
+
+GET {{host}}/api/animal-types?name=cachorro
+Accept: application/json
+
+###
+
+GET {{host}}/api/animal-types?id=1
+Accept: application/json
+
+###
+
+GET {{host}}/api/animal-types?id=1&name=cacho
+Accept: application/json
+
+###
+
+PUT {{host}}/api/animal-types/8
+Content-Type: application/json
+
+{
+  "name": "Gato"
+}
+
+###
+
+DELETE {{host}}/api/animal-types/1
+
+
+###
+// ------------------------------------ Invalid requests ------------------------------------
+
+POST {{host}}/api/animal-types
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+###
+
+POST {{host}}/api/animal-types
+Content-Type: application/json
+
+{
+  "name": "asd123456789012345678901234567899006572309857630498572398576320671671034976530957809346502837465083765083476503924857623096734905786234059762307"
+}
+
+###
+
+PUT {{host}}/api/animal-types/52359
+Content-Type: application/json
+
+{
+  "name": "Lhama"
+}
+
+
+###
+
+DELETE {{host}}/api/animal-types/52353

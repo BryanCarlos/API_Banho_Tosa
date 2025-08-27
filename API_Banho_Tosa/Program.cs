@@ -1,5 +1,5 @@
-
-using API_Banho_Tosa.Application.Owners;
+using API_Banho_Tosa.Application.AnimalTypes.Services;
+using API_Banho_Tosa.Application.Owners.Services;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Infrastructure.Persistence;
 using API_Banho_Tosa.Infrastructure.Persistence.Repositories;
@@ -20,8 +20,12 @@ namespace API_Banho_Tosa
                 opt.UseNpgsql(builder.Configuration.GetConnectionString("BanhoTosaContext")));
 
             builder.Services.AddScoped<BanhoTosaContext>();
+            
             builder.Services.AddTransient<IOwnerRepository, OwnerRepository>();
             builder.Services.AddTransient<IOwnerService, OwnerService>();
+
+            builder.Services.AddTransient<IAnimalTypeRepository, AnimalTypeRepository>();
+            builder.Services.AddTransient<IAnimalTypeService, AnimalTypeService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

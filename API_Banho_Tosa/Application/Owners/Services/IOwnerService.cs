@@ -1,7 +1,7 @@
 ﻿using API_Banho_Tosa.Application.Owners.DTOs;
 using API_Banho_Tosa.Domain.Entities;
 
-namespace API_Banho_Tosa.Application.Owners
+namespace API_Banho_Tosa.Application.Owners.Services
 {
     public interface IOwnerService
     {

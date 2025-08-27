@@ -1,9 +1,10 @@
 ﻿using API_Banho_Tosa.Application.Owners.DTOs;
+using API_Banho_Tosa.Application.Owners.Mappers;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Domain.ValueObjects;
 
-namespace API_Banho_Tosa.Application.Owners
+namespace API_Banho_Tosa.Application.Owners.Services
 {
     public class OwnerService : IOwnerService
     {
@@ -11,7 +12,7 @@ namespace API_Banho_Tosa.Application.Owners
 
         public OwnerService(IOwnerRepository repository)
         {
-            this._ownerRepository = repository;
+            _ownerRepository = repository;
         }
 
         public async Task<OwnerResponse> CreateOwnerAsync(OwnerRequest dto)
@@ -25,21 +26,19 @@ namespace API_Banho_Tosa.Application.Owners
             await _ownerRepository.InsertOwnerAsync(ownerEntity);
             await _ownerRepository.SaveChangesAsync();
 
-            var responseDto = MapToResponse(ownerEntity);
-
-            return responseDto;
+            return ownerEntity.MapToResponse();
         }
 
         public async Task<IEnumerable<OwnerResponse>> SearchOwnersAsync(SearchOwnerRequest requestParams)
         {
             var owners = await _ownerRepository.SearchOwnersAsync(requestParams);
-            return MapToEnumerableResponse(owners);
+            return owners.MapToEnumerableResponse();
         }
 
         public async Task <IEnumerable<OwnerResponseFullInfo>> GetOwnersFullInfo()
         {
             var owners = await _ownerRepository.GetOwnersAsync();
-            return MapToEnumerableFullInfoResponse(owners);
+            return owners.MapToEnumerableFullInfoResponse();
         }
 
         public async Task DeleteOwnerByUuid(Guid uuid)
@@ -64,13 +63,13 @@ namespace API_Banho_Tosa.Application.Owners
                 throw new KeyNotFoundException($"Owner with UUID {uuid} not found.");
             }
 
-            return MapToResponse(owner);
+            return owner.MapToResponse();
         }
 
         public async Task<IEnumerable<OwnerResponseFullInfo>> GetArchivedOwners()
         {
             var archivedOwners = await _ownerRepository.GetArchivedOwnersAsync();
-            return MapToEnumerableFullInfoResponse(archivedOwners);
+            return archivedOwners.MapToEnumerableFullInfoResponse();
         }
 
         public async Task<OwnerResponse> UpdateOwner(Guid uuid, OwnerRequest dto)
@@ -89,7 +88,7 @@ namespace API_Banho_Tosa.Application.Owners
             owner.UpdatePhone(phoneNumberObject?.ToString());
 
             await _ownerRepository.SaveChangesAsync();
-            return MapToResponse(owner);
+            return owner.MapToResponse();
         }
 
         public async Task<OwnerResponse> ReactivateOwner(Guid uuid)
@@ -103,43 +102,7 @@ namespace API_Banho_Tosa.Application.Owners
 
             owner.Reactivate();
             await _ownerRepository.SaveChangesAsync();
-            return MapToResponse(owner);
-        }
-
-        private IEnumerable<OwnerResponse> MapToEnumerableResponse(IEnumerable<Owner> owners)
-        {
-            return owners.Select(MapToResponse);
-        }
-
-        private OwnerResponse MapToResponse(Owner owner)
-        {
-            return new OwnerResponse
-            {
-                Uuid = owner.Uuid,
-                Name = owner.Name,
-                Address = owner.Address,
-                Phone = owner.Phone?.Value,
-                CreatedAt = owner.CreatedAt
-            };
-        }
-
-        private IEnumerable<OwnerResponseFullInfo> MapToEnumerableFullInfoResponse(IEnumerable<Owner> owners)
-        {
-            return owners.Select(MapToFullInfoResponse);
-        }
-
-        private OwnerResponseFullInfo MapToFullInfoResponse(Owner owner)
-        {
-            return new OwnerResponseFullInfo
-            {
-                Uuid = owner.Uuid,
-                Name = owner.Name,
-                Address = owner.Address,
-                Phone = owner.Phone?.Value,
-                CreatedAt = owner.CreatedAt,
-                UpdatedAt = owner.UpdatedAt,
-                DeletedAt = owner.DeletedAt
-            };
+            return owner.MapToResponse();
         }
     }
 }

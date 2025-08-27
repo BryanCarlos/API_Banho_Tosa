@@ -1,5 +1,6 @@
-using API_Banho_Tosa.Application.Owners;
 using API_Banho_Tosa.Application.Owners.DTOs;
+using API_Banho_Tosa.Application.Owners.Mappers;
+using API_Banho_Tosa.Application.Owners.Services;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Domain.ValueObjects;
@@ -24,7 +25,7 @@ namespace BanhoTosa.Application.Tests.Owners
         public async Task CreateOwnerAsync_WithValidData_ShouldCreateOwner()
         {
             // Arrange
-            var ownerDto = new OwnerRequest { Name = "Owner test", Phone = "41 98765-4321", Address = "Rua Abc, 1234" };
+            var ownerDto = new OwnerRequest(Name: "Owner test", Phone: "41 98765-4321", Address: "Rua Abc, 1234");
 
             _ownerRepositoryMock
                 .Setup(repo => repo.InsertOwnerAsync(It.IsAny<Owner>())) // we use It.IsAny<Owner> to accepts any Owner object
@@ -61,20 +62,13 @@ namespace BanhoTosa.Application.Tests.Owners
             var ownersEntities = GetSampleOwners();
             var activeOwnersEntities = ownersEntities.Where(o => o.DeletedAt == null);
 
-            var searchParams = new SearchOwnerRequest();
+            var searchParams = new SearchOwnerRequest(Name: null, Phone: null);
 
             _ownerRepositoryMock
                 .Setup(repo => repo.SearchOwnersAsync(searchParams))
                 .ReturnsAsync(activeOwnersEntities);
 
-            var expectedDtos = activeOwnersEntities.Select(o => new OwnerResponse
-            {
-                Uuid = o.Uuid,
-                Name = o.Name,
-                Phone = o.Phone?.ToString(),
-                Address = o.Address,
-                CreatedAt = o.CreatedAt
-            }).ToList();
+            var expectedDtos = activeOwnersEntities.Select(o => o.MapToResponse()).ToList();
 
             // Act
             var actualDtos = await _sut.SearchOwnersAsync(searchParams);
@@ -95,10 +89,7 @@ namespace BanhoTosa.Application.Tests.Owners
             // Arrange
             var allOwnersEntities = GetSampleOwners();
 
-            var searchParams = new SearchOwnerRequest()
-            {
-                Name = "Silva"
-            };
+            var searchParams = new SearchOwnerRequest(Name: "Silva", Phone: null);
 
             var expectedOwners = allOwnersEntities.Where(o => o.Name.Contains("Silva", StringComparison.OrdinalIgnoreCase)).ToList();
 
@@ -306,7 +297,7 @@ namespace BanhoTosa.Application.Tests.Owners
 
             var updatedName = "Bryan Carlos da Silva";
             var updatedPhone = "(41) 99999-8888";
-            var ownerUpdatedData = new OwnerRequest { Name = updatedName, Address = ownerToUpdate.Address, Phone = updatedPhone };
+            var ownerUpdatedData = new OwnerRequest(Name: updatedName, Address: ownerToUpdate.Address, Phone: updatedPhone);
 
             _ownerRepositoryMock
                 .Setup(repo => repo.GetOwnerByUuidAsync(originalUuid))
@@ -344,7 +335,7 @@ namespace BanhoTosa.Application.Tests.Owners
             var updatedName = "New Owner Name";
             var updatedPhone = "(55) 94444-2222";
 
-            var ownerUpdateData = new OwnerRequest { Name = updatedName, Phone = updatedPhone };
+            var ownerUpdateData = new OwnerRequest(Name: updatedName, Phone: updatedPhone, Address: null);
 
             _ownerRepositoryMock
                 .Setup(repo => repo.GetOwnerByUuidAsync(originalUuid))
@@ -382,7 +373,7 @@ namespace BanhoTosa.Application.Tests.Owners
             var updatedName = "New Owner Name";
             var updatedAddress = "Rua Novo Endereco, 456";
 
-            var ownerUpdateData = new OwnerRequest { Name = updatedName, Address = updatedAddress };
+            var ownerUpdateData = new OwnerRequest(Name: updatedName, Phone: null, Address: updatedAddress);
 
             _ownerRepositoryMock
                 .Setup(repo => repo.GetOwnerByUuidAsync(originalUuid))
@@ -420,7 +411,7 @@ namespace BanhoTosa.Application.Tests.Owners
 
             var updatedName = "New Owner Name";
 
-            var ownerUpdateData = new OwnerRequest { Name = updatedName };
+            var ownerUpdateData = new OwnerRequest(Name: updatedName, Phone: null, Address: null);
 
             _ownerRepositoryMock
                 .Setup(repo => repo.GetOwnerByUuidAsync(originalUuid))
@@ -455,7 +446,7 @@ namespace BanhoTosa.Application.Tests.Owners
             var firstOwner = owners.First();
             var originalUuid = firstOwner.Uuid;
 
-            var ownerUpdateData = new OwnerRequest { Name = "" };
+            var ownerUpdateData = new OwnerRequest(Name: "", Phone: null, Address: null);
 
             _ownerRepositoryMock
                 .Setup(repo => repo.GetOwnerByUuidAsync(originalUuid))

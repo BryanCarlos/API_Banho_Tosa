@@ -3,20 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace API_Banho_Tosa.Application.Owners.DTOs
 {
-    public class OwnerRequest
-    {
+    public record OwnerRequest(
         [Required(ErrorMessage = "The name is required.")]
         [MaxLength(255)]
         [JsonProperty("name")]
-        public required string Name { get; set; }
+        string Name,
 
         [MinLength(10)]
         [MaxLength(25)]
         [JsonProperty("phone")]
-        public string? Phone { get; set; }
+        string? Phone,
 
         [MaxLength(500)]
         [JsonProperty("address")]
-        public string? Address { get; set; }
-    }
+        string? Address
+    );
 }

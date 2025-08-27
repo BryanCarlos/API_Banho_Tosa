@@ -2,12 +2,17 @@
 
 namespace API_Banho_Tosa.Application.Owners.DTOs
 {
-    public class OwnerResponseFullInfo : OwnerResponse
-    {
+    public record OwnerResponseFullInfo(
+        Guid Uuid,
+        string Name,
+        string? Phone,
+        string? Address,
+        DateTime CreatedAt,
+
         [JsonProperty("updated_at")]
-        public DateTime UpdatedAt { get; set; }
+        DateTime UpdatedAt,
 
         [JsonProperty("deleted_at")]
-        public DateTime? DeletedAt { get; set; }
-    }
+        DateTime? DeletedAt) : OwnerResponse(Uuid, Name, Phone, Address, CreatedAt
+    );
 }

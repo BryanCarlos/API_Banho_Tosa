@@ -2,21 +2,20 @@
 
 namespace API_Banho_Tosa.Application.Owners.DTOs
 {
-    public class OwnerResponse
-    {
+    public record OwnerResponse(
         [JsonProperty("uuid")]
-        public Guid Uuid { get; set; }
+        Guid Uuid,
 
         [JsonProperty("name")]
-        public required string Name { get; set; }
+        string Name,
 
         [JsonProperty("phone")]
-        public string? Phone { get; set; }
+        string? Phone,
 
         [JsonProperty("address")]
-        public string? Address { get; set; }
+        string? Address,
 
         [JsonProperty("created_at")]
-        public DateTime CreatedAt { get; set; }
-    }
+        DateTime CreatedAt
+    );
 }
