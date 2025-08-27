@@ -6,16 +6,16 @@ namespace API_Banho_Tosa.Application.Owners.DTOs
         [JsonProperty("uuid")]
         Guid Uuid,
 
+        [JsonProperty("created_at")]
+        DateTime CreatedAt,
+
         [JsonProperty("name")]
         string Name,
 
         [JsonProperty("phone")]
-        string? Phone,
+        string? Phone = null,
 
         [JsonProperty("address")]
-        string? Address,
-
-        [JsonProperty("created_at")]
-        DateTime CreatedAt
+        string? Address = null
     );
 }

@@ -12,10 +12,10 @@ namespace API_Banho_Tosa.Application.Owners.DTOs
         [MinLength(10)]
         [MaxLength(25)]
         [JsonProperty("phone")]
-        string? Phone,
+        string? Phone = null,
 
         [MaxLength(500)]
         [JsonProperty("address")]
-        string? Address
+        string? Address = null
     );
 }
