@@ -9,6 +9,7 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
     {
         public DbSet<Owner> Owners { get; set; }
         public DbSet<AnimalType> AnimalTypes { get; set; }
+        public DbSet<Breed> Breeds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,6 +48,15 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
             modelBuilder
                 .Entity<AnimalType>()
                 .Property(o => o.Id)
+                .UseIdentityColumn();
+
+            #endregion
+
+            #region Breed builder
+
+            modelBuilder
+                .Entity<Breed>()
+                .Property(b => b.Id)
                 .UseIdentityColumn();
 
             #endregion

@@ -3,15 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API_Banho_Tosa.Domain.Entities
 {
-    [Table("animal_types")]
-    public class AnimalType
+    [Table("breeds")]
+    public class Breed
     {
-        [Column("animal_type_id")]
+        [Column("breed_id")]
         public int Id { get; private set; }
 
-        [Column("animal_type_name")]
+        [Column("breed_name")]
         [MaxLength(100)]
         public string Name { get; private set; } = string.Empty;
+
+        [Column("animal_type_id")]
+        public int AnimalTypeId { get; private set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; private set; }
@@ -19,28 +22,32 @@ namespace API_Banho_Tosa.Domain.Entities
         [Column("updated_at")]
         public DateTime UpdatedAt { get; private set; }
 
-        public HashSet<Breed> Breeds { get; } = new HashSet<Breed>();
+        public AnimalType AnimalType { get; private set; } = null!;
 
-        private AnimalType() { }
+        private Breed() { }
 
-        public AnimalType(string name)
+        public Breed(string name, int animalTypeId)
         {
             ValidateName(name);
 
+            if (animalTypeId <= 0)
+            {
+                throw new ArgumentException("Animal type ID is required.");
+            }
+
             this.Name = name;
+            this.AnimalTypeId = animalTypeId;
 
             var now = DateTime.UtcNow;
-
             this.CreatedAt = now;
             this.UpdatedAt = now;
         }
-       
+
         public void UpdateName(string name)
         {
             ValidateName(name);
 
-            if (this.Name == name)
-                return;
+            if (this.Name == name) return;
 
             this.Name = name;
             MarkAsUpdated();
