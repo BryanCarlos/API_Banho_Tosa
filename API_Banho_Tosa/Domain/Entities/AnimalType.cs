@@ -23,7 +23,7 @@ namespace API_Banho_Tosa.Domain.Entities
 
         private AnimalType() { }
 
-        public AnimalType(string name)
+        private AnimalType(string name)
         {
             ValidateName(name);
 
@@ -33,6 +33,11 @@ namespace API_Banho_Tosa.Domain.Entities
 
             this.CreatedAt = now;
             this.UpdatedAt = now;
+        }
+
+        public static AnimalType Create(string name)
+        {
+            return new AnimalType(name);
         }
        
         public void UpdateName(string name)

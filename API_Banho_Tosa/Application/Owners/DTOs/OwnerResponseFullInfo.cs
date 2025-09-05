@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace API_Banho_Tosa.Application.Owners.DTOs
 {
     public record OwnerResponseFullInfo(
-        [JsonProperty("updated_at")]
+        [property: JsonPropertyName("updated_at")]
         DateTime UpdatedAt,
 
-        [JsonProperty("deleted_at")]
+        [property: JsonPropertyName("deleted_at")]
         DateTime? DeletedAt,
 
         Guid Uuid,

@@ -1,5 +1,6 @@
 ﻿using API_Banho_Tosa.Application.AnimalTypes.DTOs;
 using API_Banho_Tosa.Application.AnimalTypes.Services;
+using API_Banho_Tosa.Application.Breeds.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
@@ -9,11 +10,13 @@ namespace API_Banho_Tosa.API.Controllers
     public class AnimalTypeController : ControllerBase
     {
         private readonly IAnimalTypeService _animalTypeService;
+        private readonly IBreedService _breedService;
         private const string getTypeByIdRouteName = "GetAnimalTypeById";
 
-        public AnimalTypeController(IAnimalTypeService service)
+        public AnimalTypeController(IAnimalTypeService animalTypeService, IBreedService breedService)
         {
-            _animalTypeService = service;
+            _animalTypeService = animalTypeService;
+            _breedService = breedService;
         }
 
         [HttpGet]
@@ -53,6 +56,13 @@ namespace API_Banho_Tosa.API.Controllers
         {
             var updatedEntity = await _animalTypeService.UpdateAnimalTypeAsync(id, request);
             return Ok(updatedEntity);
+        }
+
+        [HttpGet("{id}/breeds")]
+        public async Task<IActionResult> GetBreedsForAnimalType([FromRoute] int id)
+        {
+            var breeds = await _breedService.GetBreedsByAnimalTypeIdAsync(id);
+            return Ok(breeds);
         }
     }
 }

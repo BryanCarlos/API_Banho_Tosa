@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace API_Banho_Tosa.Application.AnimalTypes.DTOs
 {
     public record AnimalTypeResponse(
-        [JsonProperty("id")]
+        [property : JsonPropertyName("id")]
         int Id,
 
-        [JsonProperty("name")]
+        [property : JsonPropertyName("name")]
         string Name
     );
 }

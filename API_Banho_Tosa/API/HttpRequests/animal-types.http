@@ -40,6 +40,11 @@ Content-Type: application/json
 
 DELETE {{host}}/api/animal-types/1
 
+###
+
+GET {{host}}/api/animal-types/1/breeds
+Accept: application/json
+
 
 ###
 // ------------------------------------ Invalid requests ------------------------------------

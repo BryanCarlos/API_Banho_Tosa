@@ -1,21 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿
+using System.Text.Json.Serialization;
 
 namespace API_Banho_Tosa.Application.Owners.DTOs
 {
     public record OwnerResponse(
-        [JsonProperty("uuid")]
+        [property:JsonPropertyName("uuid")]
         Guid Uuid,
 
-        [JsonProperty("created_at")]
+        [property:JsonPropertyName("created_at")]
         DateTime CreatedAt,
 
-        [JsonProperty("name")]
+        [property:JsonPropertyName("name")]
         string Name,
 
-        [JsonProperty("phone")]
+        [property:JsonPropertyName("phone")]
         string? Phone = null,
 
-        [JsonProperty("address")]
+        [property:JsonPropertyName("address")]
         string? Address = null
     );
 }

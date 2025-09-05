@@ -16,7 +16,7 @@ namespace API_Banho_Tosa.Application.AnimalTypes.Services
 
         public async Task<AnimalTypeResponse> CreateAnimalTypeAsync(AnimalTypeRequest request)
         {
-            var animalType = new AnimalType(request.Name);
+            var animalType = AnimalType.Create(request.Name);
 
             await _animalTypeRepository.InsertAnimalTypeAsync(animalType);
             await _animalTypeRepository.SaveChangesAsync();

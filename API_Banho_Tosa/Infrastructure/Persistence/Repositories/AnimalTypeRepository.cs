@@ -36,19 +36,9 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<IEnumerable<AnimalType>> GetAllAnimalTypesAsync()
-        {
-            return await _dbContext.AnimalTypes.ToListAsync();
-        }
-
         public async Task<AnimalType?> GetAnimalTypeByIdAsync(int id)
         {
             return await _dbContext.AnimalTypes.FindAsync(id);
-        }
-
-        public async Task<AnimalType?> GetAnimalTypeByNameAsync(string name)
-        {
-            return await _dbContext.AnimalTypes.FirstOrDefaultAsync(at => EF.Functions.ILike(at.Name, $"{name}%"));
         }
 
         public async Task InsertAnimalTypeAsync(AnimalType animalType)

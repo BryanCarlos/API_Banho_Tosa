@@ -58,6 +58,7 @@ namespace API_Banho_Tosa.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)status;
 
+
             string result = JsonSerializer.Serialize(new { error = message });
             return context.Response.WriteAsync(result);
         }

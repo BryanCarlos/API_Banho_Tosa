@@ -37,7 +37,7 @@ namespace BanhoTosa.Application.Tests.AnimalTypes
                 {
                     // Here, we simulate database setting an ID to the object
                     // the service created. Since the ID setter is private, we use Reflection
-                    at.GetType().GetProperty(nameof(AnimalType.Id)).SetValue(at, 1);
+                    at.GetType().GetProperty(nameof(AnimalType.Id))!.SetValue(at, 1);
                 });
 
             _animalTypeRepositoryMock
@@ -69,8 +69,8 @@ namespace BanhoTosa.Application.Tests.AnimalTypes
             // Arrange
             int idToDelete = 67;
 
-            var animalToDelete = new AnimalType(name: "Animal");
-            animalToDelete.GetType().GetProperty(nameof(AnimalType.Id)).SetValue(animalToDelete, idToDelete);
+            var animalToDelete = AnimalType.Create(name: "Animal");
+            animalToDelete.GetType().GetProperty(nameof(AnimalType.Id))!.SetValue(animalToDelete, idToDelete);
 
             _animalTypeRepositoryMock
                 .Setup(repo => repo.GetAnimalTypeByIdAsync(idToDelete))
@@ -117,7 +117,7 @@ namespace BanhoTosa.Application.Tests.AnimalTypes
         {
             // Arrange
             string typeName = "Animal";
-            var animalTypeToReturn = new AnimalType(name: typeName);
+            var animalTypeToReturn = AnimalType.Create(name: typeName);
 
             _animalTypeRepositoryMock
                 .Setup(repo => repo.GetAnimalTypeByIdAsync(It.IsAny<int>()))
@@ -250,8 +250,8 @@ namespace BanhoTosa.Application.Tests.AnimalTypes
             int idToUpdate = 1;
             string oldName = "Old name";
             string newName = "New name";
-            var animalTypeToUpdate = new AnimalType(oldName);
-            animalTypeToUpdate.GetType().GetProperty(nameof(AnimalType.Id)).SetValue(animalTypeToUpdate, idToUpdate);
+            var animalTypeToUpdate = AnimalType.Create(oldName);
+            animalTypeToUpdate.GetType().GetProperty(nameof(AnimalType.Id))!.SetValue(animalTypeToUpdate, idToUpdate);
 
             var animalTypeUpdateDto = new AnimalTypeRequest(newName);
 
@@ -289,14 +289,14 @@ namespace BanhoTosa.Application.Tests.AnimalTypes
 
         private IEnumerable<AnimalType> GetSampleAnimalTypes()
         {
-            var type1 = new AnimalType(name: "Cachorro");
-            type1.GetType().GetProperty(nameof(AnimalType.Id)).SetValue(type1, 1);
+            var type1 = AnimalType.Create(name: "Cachorro");
+            type1.GetType().GetProperty(nameof(AnimalType.Id))!.SetValue(type1, 1);
 
-            var type2 = new AnimalType(name: "Coelho");
-            type2.GetType().GetProperty(nameof(AnimalType.Id)).SetValue(type2, 2);
+            var type2 = AnimalType.Create(name: "Coelho");
+            type2.GetType().GetProperty(nameof(AnimalType.Id))!.SetValue(type2, 2);
 
-            var type3 = new AnimalType(name: "Gato");
-            type3.GetType().GetProperty(nameof(AnimalType.Id)).SetValue(type3, 3);
+            var type3 = AnimalType.Create(name: "Gato");
+            type3.GetType().GetProperty(nameof(AnimalType.Id))!.SetValue(type3, 3);
 
             return new List<AnimalType>() { type1, type2, type3 };
         }

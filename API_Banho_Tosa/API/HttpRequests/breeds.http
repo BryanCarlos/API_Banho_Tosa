@@ -1,0 +1,80 @@
+// ------------------------------------ Valid requests ------------------------------------
+
+GET {{host}}/api/breeds
+Accept: application/json
+
+###
+
+POST {{host}}/api/breeds
+Content-Type: application/json
+
+{
+  "name": "Siames",
+  "animal_type_id": 5
+}
+
+###
+
+PUT {{host}}/api/breeds/1
+Content-Type: application/json
+
+{
+  "name": "Border Collie",
+  "animal_type_id": 1
+}
+
+### 
+
+DELETE {{host}}/api/breeds/9
+
+###
+// ------------------------------------ Invalid requests ------------------------------------
+
+POST {{host}}/api/breeds
+Content-Type: application/json
+
+{
+  "name": "Buldogue",
+  "animal_type_id": 123214
+}
+
+###
+
+POST {{host}}/api/breeds
+Content-Type: application/json
+
+{
+  "name": "Buldogue"
+}
+
+###
+
+POST {{host}}/api/breeds
+Content-Type: application/json
+
+{
+  "animal_type_id": 123214
+}
+
+###
+
+POST {{host}}/api/breeds
+Content-Type: application/json
+
+{
+  "name": "qwertyuiopasdfghjklzxcvbnmqwertyuiosdfghjxzcxvbndfghedrftghyxcvbgfh12345678sdfghjiauwghdawioyudgawouydgawoduyawadfwafawfawfawfsggsdghsdghjuykiuk",
+  "animal_type_id": 1
+}
+
+###
+
+PUT {{host}}/api/breeds/152574
+Content-Type: application/json
+
+{
+  "name": "Poodle"
+}
+
+###
+
+DELETE {{host}}/api/breeds/2113412

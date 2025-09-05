@@ -16,7 +16,7 @@ namespace BanhoTosa.Domain.Tests.Entities
             string type = "Cachorro";
 
             // Act
-            var animalType = new AnimalType(type);
+            var animalType = AnimalType.Create(type);
 
             // Assert
             Assert.NotNull(animalType);
@@ -33,7 +33,7 @@ namespace BanhoTosa.Domain.Tests.Entities
 
             DateTime now = DateTime.UtcNow;
 
-            var animalType = new AnimalType(initialName);
+            var animalType = AnimalType.Create(initialName);
 
             // Act
             animalType.UpdateName(updatedName);
@@ -51,7 +51,7 @@ namespace BanhoTosa.Domain.Tests.Entities
         public void UpdateName_WithNullOrInvalidInput_ShouldThrowArgumentNullException(string input)
         {
             // Arrange
-            var animalType = new AnimalType(name: "Gato");
+            var animalType = AnimalType.Create(name: "Gato");
 
             // Act & Assert
             Assert.Throws<ArgumentNullException>(() =>
@@ -64,7 +64,7 @@ namespace BanhoTosa.Domain.Tests.Entities
         public void UpdateName_WithInvalidInputLength_ShouldThrowArgumentOutOfRangeException()
         {
             // Arrange
-            var animalType = new AnimalType(name: "Cachorro");
+            var animalType = AnimalType.Create(name: "Cachorro");
             string invalidInput = new string('a', 101);
 
             // Act & Assert

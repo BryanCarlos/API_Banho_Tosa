@@ -1,21 +1,21 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API_Banho_Tosa.Application.Owners.DTOs
 {
     public record OwnerRequest(
         [Required(ErrorMessage = "The name is required.")]
         [MaxLength(255)]
-        [JsonProperty("name")]
+        [property: JsonPropertyName("name")]
         string Name,
 
         [MinLength(10)]
         [MaxLength(25)]
-        [JsonProperty("phone")]
+        [property: JsonPropertyName("phone")]
         string? Phone = null,
 
         [MaxLength(500)]
-        [JsonProperty("address")]
+        [property: JsonPropertyName("address")]
         string? Address = null
     );
 }

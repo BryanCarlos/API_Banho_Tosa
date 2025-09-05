@@ -26,7 +26,7 @@ namespace API_Banho_Tosa.Domain.Entities
 
         private Breed() { }
 
-        public Breed(string name, int animalTypeId)
+        private Breed(string name, int animalTypeId)
         {
             ValidateName(name);
 
@@ -41,6 +41,11 @@ namespace API_Banho_Tosa.Domain.Entities
             var now = DateTime.UtcNow;
             this.CreatedAt = now;
             this.UpdatedAt = now;
+        }
+
+        public static Breed Create(string name, int animalTypeId)
+        {
+            return new Breed(name, animalTypeId);
         }
 
         public void UpdateName(string name)
@@ -61,10 +66,10 @@ namespace API_Banho_Tosa.Domain.Entities
         private void ValidateName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentNullException(nameof(Name));
+                throw new ArgumentException("The breed name cannot be null or empty.");
 
             if (name.Length > 100)
-                throw new ArgumentOutOfRangeException(nameof(Name));
+                throw new ArgumentOutOfRangeException(nameof(Name), "The breed name cannot exceed 100 characters.");
         }
     }
 }
