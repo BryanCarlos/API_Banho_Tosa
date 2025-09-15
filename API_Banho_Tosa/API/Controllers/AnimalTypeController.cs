@@ -47,7 +47,9 @@ namespace API_Banho_Tosa.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnimalTypeAsync([FromRoute] int id)
         {
-            await _animalTypeService.DeleteAnimalTypeAsync(id);
+            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            await _animalTypeService.DeleteAnimalTypeAsync(id, requestingIpAddress);
             return NoContent();
         }
 

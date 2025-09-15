@@ -36,14 +36,18 @@ namespace API_Banho_Tosa.API.Controllers
         [HttpGet("full_info")]
         public async Task<IActionResult> GetOwners()
         {
-            var owners = await _ownerService.GetOwnersFullInfo();
+            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            var owners = await _ownerService.GetOwnersFullInfo(requestingIpAddress);
             return Ok(owners);
         }
 
         [HttpGet("archived")]
         public async Task<IActionResult> GetArchivedOwners()
         {
-            var archivedOwners = await _ownerService.GetArchivedOwners();
+            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            var archivedOwners = await _ownerService.GetArchivedOwners(requestingIpAddress);
             return Ok(archivedOwners);
         }
 
@@ -64,14 +68,18 @@ namespace API_Banho_Tosa.API.Controllers
         [HttpPatch("{uuid}/reactivate")]
         public async Task<IActionResult> ReactivateOwner([FromRoute] Guid uuid)
         {
-            var reactivatedOwner = await _ownerService.ReactivateOwner(uuid);
+            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            var reactivatedOwner = await _ownerService.ReactivateOwner(uuid, requestingIpAddress);
             return Ok(reactivatedOwner);
         }
 
         [HttpDelete("{uuid}")]
         public async Task<IActionResult> DeleteOwnerByUuid([FromRoute] Guid uuid)
         {
-            await _ownerService.DeleteOwnerByUuid(uuid);
+            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            await _ownerService.DeleteOwnerByUuid(uuid, requestingIpAddress);
             return NoContent();
         }
     }

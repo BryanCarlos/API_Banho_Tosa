@@ -8,6 +8,6 @@ namespace API_Banho_Tosa.Application.AnimalTypes.Services
         Task<AnimalTypeResponse> GetAnimalTypeByIdAsync(int id);
         Task<IEnumerable<AnimalTypeResponse>> SearchAnimalTypesAsync(SearchAnimalTypeRequest searchParams);
         Task<AnimalTypeResponse> UpdateAnimalTypeAsync(int id, AnimalTypeRequest request);
-        Task DeleteAnimalTypeAsync(int id);
+        Task DeleteAnimalTypeAsync(int id, string? requestingIpAddress);
     }
 }

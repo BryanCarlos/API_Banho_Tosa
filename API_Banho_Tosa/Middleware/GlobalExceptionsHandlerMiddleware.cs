@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Http;
+using System.Net;
+using System.Reflection.Metadata;
 using System.Text.Json;
 
 namespace API_Banho_Tosa.Middleware
@@ -6,10 +8,12 @@ namespace API_Banho_Tosa.Middleware
     public class GlobalExceptionsHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<GlobalExceptionsHandlerMiddleware> _logger;
 
-        public GlobalExceptionsHandlerMiddleware(RequestDelegate next)
+        public GlobalExceptionsHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionsHandlerMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -26,38 +30,40 @@ namespace API_Banho_Tosa.Middleware
 
         private Task HandleExceptionsAsync(HttpContext context, Exception exception)
         {
-            HttpStatusCode status;
-            string message;
-
-            switch (exception)
+            var (status, message) = exception switch
             {
-                case ArgumentNullException:
-                case ArgumentOutOfRangeException:
-                case ArgumentException:
-                    status = HttpStatusCode.BadRequest;
-                    message = exception.Message;
-                break;
+                ArgumentException or ArgumentNullException or ArgumentOutOfRangeException =>
+                    (HttpStatusCode.BadRequest, exception.Message),
 
-                case KeyNotFoundException:
-                    status = HttpStatusCode.NotFound;
-                    message = exception.Message;
-                break;
+                KeyNotFoundException =>
+                    (HttpStatusCode.NotFound, exception.Message),
 
-                case InvalidOperationException:
-                    status = HttpStatusCode.Conflict;
-                    message = exception.Message;
-                break;
+                InvalidOperationException =>
+                    (HttpStatusCode.Conflict, exception.Message),
 
-                default:
-                    status = HttpStatusCode.InternalServerError;
-                    message = exception.Message;
-                    // TODO: Logar a excecao
-                break;
-            }
+                _ =>
+                    (HttpStatusCode.InternalServerError, "An unexpected server error occurred.")
+            };
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)status;
 
+            if (status == HttpStatusCode.InternalServerError)
+            {
+                _logger.LogError(
+                    exception, 
+                    "Unhandled error resulted in InternalServerError. Original message: {ErrorMessage}", 
+                    exception.Message
+                );
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "Handled exception resulted in status { StatusCode}. Message: { ErrorMessage}",
+                    (int)status,
+                    exception.Message
+                );
+            }
 
             string result = JsonSerializer.Serialize(new { error = message });
             return context.Response.WriteAsync(result);

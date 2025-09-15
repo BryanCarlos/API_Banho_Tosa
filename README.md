@@ -24,6 +24,9 @@ Este projeto foi construído com as seguintes tecnologias e conceitos de arquite
 * **Linguagem:** C# 12
 * **Banco de Dados:** PostgreSQL
 * **ORM:** Entity Framework Core 8
+* **Observabilidade:**
+    * **Monitoramento de Performance (APM):** Datadog
+    * **Logging Estruturado:** Serilog com Sink para Datadog
 * **Testes:**
     * **Testes de Unidade:** xUnit
     * **Mocks:** Moq
@@ -50,6 +53,10 @@ Antes de começar, garanta que você tem os seguintes softwares instalados:
   ```bash
   dotnet tool install --global dotnet-ef
   ```
+* **Datadog (Opcional, para observabilidade):**
+  * Uma conta no [Datadog](https://www.datadoghq.com/) (o free trial de 14 dias é suficiente).
+  * O **Datadog Agent** instalado e rodando na sua máquina.
+  * O **Datadog .NET Tracer**, que fornece o comando `dd-trace` e a instrumentação automática. Siga as instruções de instalação para o seu sistema operacional na [documentação oficial](https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/dotnet-core/).
 * Uma IDE de sua preferência (Visual Studio, VS Code, Rider)
 
 ### 🔧 Instalação e Configuração
@@ -74,9 +81,16 @@ dotnet user-secrets init
 
 **4. Configure a Conexão com o Banco de Dados:**
 Agora, adicione sua connection string ao "cofre". Substitua os valores pelos do seu banco de dados PostgreSQL local.
+
+* **Banco de Dados:**
 ```bash
 dotnet user-secrets set "ConnectionStrings:BanhoTosaContext" "Host=localhost;Port=5432;Database=db_pet_control;Username=seu_usuario;Password=sua_senha"
 ```
+* **Datadog (Opcional):**
+```bash
+dotnet user-secrets set "Datadog:ApiKey" "sua_api_key_do_datadog"
+```
+*(**Nota:** A integração com o Datadog pode ser desabilitada no arquivo `appsettings.json` alterando a chave `Datadog:Enabled` para `false`.)*
 
 **5. Aplique as Migrations do Banco de Dados:**
 Este comando usará a connection string configurada para criar o banco de dados (se não existir) e todas as suas tabelas.
@@ -87,10 +101,21 @@ Ao final, a estrutura completa do banco de dados estará pronta para uso.
 
 ### ▶️ Executando a Aplicação
 
-Para iniciar a API, execute o seguinte comando na pasta do projeto:
+Você pode executar a aplicação de duas formas, dependendo se você quer ou não ativar o monitoramento de performance (APM) do Datadog.
+
+#### **Para Rodar a Aplicação (Padrão)**
+Este comando inicia a API sem o rastreamento do Datadog.
 ```bash
 dotnet run
 ```
+
+#### **Para Rodar com o Datadog APM (Recomendado para Testes de Observabilidade)**
+Este comando usa a ferramenta `dd-trace` para iniciar a API com o rastreamento de performance ativado. Garanta que o Datadog Agent esteja rodando na sua máquina.
+```bash
+dd-trace -- dotnet run --launch-profile https
+```
+*Após iniciar com este comando, a aplicação começará a enviar traces de APM e logs (se configurados) automaticamente para o Datadog.*
+
 A API estará rodando nas portas configuradas no arquivo `Properties/launchSettings.json`.
 
 A documentação interativa da API estará disponível via Swagger em sua respectiva URL (ex: `https://localhost:8080/swagger`).
