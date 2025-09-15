@@ -16,7 +16,12 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:8080;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DD_SERVICE": "api-banho-tosa",
+        "DD_ENV": "dev",
+        "DD_AGENT_HOST": "localhost",
+        "DD_TRACE_ENABLED": "true",
+        "DD_URL": "https://http-intake.logs.us5.datadoghq.com"
       }
     },
     "http": {
@@ -26,7 +31,12 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DD_SERVICE": "api-banho-tosa",
+        "DD_ENV": "dev",
+        "DD_AGENT_HOST": "localhost",
+        "DD_TRACE_ENABLED": "true",
+        "DD_URL": "https://http-intake.logs.us5.datadoghq.com"
       }
     },
     "IIS Express": {

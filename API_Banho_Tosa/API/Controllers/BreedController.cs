@@ -52,7 +52,9 @@ namespace API_Banho_Tosa.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBreedAsync([FromRoute] int id)
         {
-            await _breedService.DeleteBreedByIdAsync(id);
+            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            await _breedService.DeleteBreedByIdAsync(id, requestingIpAddress);
             return NoContent();
         }
     }

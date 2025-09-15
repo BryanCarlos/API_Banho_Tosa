@@ -21,7 +21,7 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
             {
                 owner.Property(o => o.Phone)
                      .HasConversion(
-                         phoneNumber => phoneNumber.Value,
+                         phoneNumber => phoneNumber!.Value,
                          valueFromDb => PhoneNumber.Create(valueFromDb)
                      )
                      .HasColumnName("owner_phone");

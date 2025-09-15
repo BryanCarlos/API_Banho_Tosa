@@ -7,6 +7,9 @@ using API_Banho_Tosa.Infrastructure.Persistence.Repositories;
 using API_Banho_Tosa.Middleware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Debugging;
+using Serilog.Sinks.Datadog.Logs;
 
 namespace API_Banho_Tosa
 {
@@ -16,10 +19,43 @@ namespace API_Banho_Tosa
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            SelfLog.Enable(Console.Error);
+
             // Add services to the container.
 
+            var loggerConfiguration = new LoggerConfiguration()
+                    .MinimumLevel.Information()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console();
+
+            var datadogEnabled = builder.Configuration.GetValue<bool>("Datadog:Enabled");
+
+            if (datadogEnabled)
+            {
+                var datadogApiKey = builder.Configuration["Datadog:ApiKey"];
+
+                if (string.IsNullOrEmpty(datadogApiKey))
+                {
+                    throw new InvalidOperationException("Datadog API Key not found. Configure it in User Secrets.");
+                }
+
+                var datadogConfig = new DatadogConfiguration(url: Environment.GetEnvironmentVariable("DD_URL"));
+
+                loggerConfiguration.WriteTo.DatadogLogs(
+                    apiKey: datadogApiKey,
+                    service: Environment.GetEnvironmentVariable("DD_SERVICE"),
+                    source: "csharp",
+                    tags: new[] { $"env:{Environment.GetEnvironmentVariable("DD_ENV")}" },
+                    configuration: datadogConfig
+                );
+            }
+
+            Log.Logger = loggerConfiguration.CreateLogger();
+
+            builder.Host.UseSerilog();
+
             builder.Services.AddDbContext<BanhoTosaContext>(opt =>
-                opt.UseNpgsql(builder.Configuration.GetConnectionString("BanhoTosaContext")));
+            opt.UseNpgsql(builder.Configuration.GetConnectionString("BanhoTosaContext")));
 
             builder.Services.AddScoped<BanhoTosaContext>();
             
@@ -53,6 +89,7 @@ namespace API_Banho_Tosa
 
             var app = builder.Build();
 
+            app.UseMiddleware<RequestLoggingMiddleware>();
             app.UseMiddleware<GlobalExceptionsHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
@@ -63,13 +100,22 @@ namespace API_Banho_Tosa
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
-
-
             app.MapControllers();
 
-            app.Run();
+            try
+            {
+                Log.Information("Starting application...");
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "The application failed to start.");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }
