@@ -1,9 +1,12 @@
 ﻿using API_Banho_Tosa.Application.Owners.DTOs;
 using API_Banho_Tosa.Application.Owners.Services;
+using API_Banho_Tosa.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/owners")]
     public class OwnerController : ControllerBase
@@ -33,24 +36,6 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(owners);
         }
 
-        [HttpGet("full_info")]
-        public async Task<IActionResult> GetOwners()
-        {
-            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var owners = await _ownerService.GetOwnersFullInfo(requestingIpAddress);
-            return Ok(owners);
-        }
-
-        [HttpGet("archived")]
-        public async Task<IActionResult> GetArchivedOwners()
-        {
-            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var archivedOwners = await _ownerService.GetArchivedOwners(requestingIpAddress);
-            return Ok(archivedOwners);
-        }
-
         [HttpGet("{uuid}")]
         public async Task<IActionResult> GetOwnerByUuid([FromRoute] Guid uuid)
         {
@@ -58,6 +43,23 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(owner);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
+        [HttpGet("full_info")]
+        public async Task<IActionResult> GetOwners()
+        {
+            var owners = await _ownerService.GetOwnersFullInfo();
+            return Ok(owners);
+        }
+
+        [Authorize(Roles = AppRoles.Admin)]
+        [HttpGet("archived")]
+        public async Task<IActionResult> GetArchivedOwners()
+        {
+            var archivedOwners = await _ownerService.GetArchivedOwners();
+            return Ok(archivedOwners);
+        }
+
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPut("{uuid}")]
         public async Task<IActionResult> UpdateOwner([FromRoute] Guid uuid, [FromBody] OwnerRequest request)
         {
@@ -65,21 +67,19 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(updatedOwner);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPatch("{uuid}/reactivate")]
         public async Task<IActionResult> ReactivateOwner([FromRoute] Guid uuid)
         {
-            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            var reactivatedOwner = await _ownerService.ReactivateOwner(uuid, requestingIpAddress);
+            var reactivatedOwner = await _ownerService.ReactivateOwner(uuid);
             return Ok(reactivatedOwner);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{uuid}")]
         public async Task<IActionResult> DeleteOwnerByUuid([FromRoute] Guid uuid)
         {
-            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            await _ownerService.DeleteOwnerByUuid(uuid, requestingIpAddress);
+            await _ownerService.DeleteOwnerByUuid(uuid);
             return NoContent();
         }
     }

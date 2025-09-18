@@ -7,11 +7,11 @@ namespace API_Banho_Tosa.Application.Owners.Services
     {
         Task<OwnerResponse> CreateOwnerAsync(OwnerRequest dto);
         Task<IEnumerable<OwnerResponse>> SearchOwnersAsync(SearchOwnerRequest searchParams);
-        Task<IEnumerable<OwnerResponseFullInfo>> GetArchivedOwners(string? requestingIpAddress);
-        Task<IEnumerable<OwnerResponseFullInfo>> GetOwnersFullInfo(string? requestingIpAddress);
-        Task DeleteOwnerByUuid(Guid uuid, string? requestingIpAddress);
+        Task<IEnumerable<OwnerResponseFullInfo>> GetArchivedOwners();
+        Task<IEnumerable<OwnerResponseFullInfo>> GetOwnersFullInfo();
+        Task DeleteOwnerByUuid(Guid uuid);
         Task<OwnerResponse?> GetOwnerByUuid(Guid uuid);
         Task<OwnerResponse> UpdateOwner(Guid uuid, OwnerRequest dto);
-        Task<OwnerResponse> ReactivateOwner(Guid uuid, string? requestingIpAddress);
+        Task<OwnerResponse> ReactivateOwner(Guid uuid);
     }
 }

@@ -1,10 +1,14 @@
 ﻿using API_Banho_Tosa.Application.AnimalTypes.DTOs;
 using API_Banho_Tosa.Application.AnimalTypes.Services;
 using API_Banho_Tosa.Application.Breeds.Services;
+using API_Banho_Tosa.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API_Banho_Tosa.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/animal-types")]
     public class AnimalTypeController : ControllerBase
@@ -26,6 +30,21 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(animalTypes);
         }
 
+        [HttpGet("{id}/breeds")]
+        public async Task<IActionResult> GetBreedsForAnimalType([FromRoute] int id)
+        {
+            var breeds = await _breedService.GetBreedsByAnimalTypeIdAsync(id);
+            return Ok(breeds);
+        }
+
+        [HttpGet("{id}", Name = getTypeByIdRouteName)]
+        public async Task<IActionResult> GetAnimalTypeByIdAsync([FromRoute] int id)
+        {
+            var animalType = await _animalTypeService.GetAnimalTypeByIdAsync(id);
+            return Ok(animalType);
+        }
+
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateAnimalTypeAsync([FromBody] AnimalTypeRequest request)
         {
@@ -37,34 +56,20 @@ namespace API_Banho_Tosa.API.Controllers
                 value: createdEntity);
         }
 
-        [HttpGet("{id}", Name = getTypeByIdRouteName)]
-        public async Task<IActionResult> GetAnimalTypeByIdAsync([FromRoute] int id)
-        {
-            var animalType = await _animalTypeService.GetAnimalTypeByIdAsync(id);
-            return Ok(animalType);
-        }
-
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnimalTypeAsync([FromRoute] int id)
         {
-            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            await _animalTypeService.DeleteAnimalTypeAsync(id, requestingIpAddress);
+            await _animalTypeService.DeleteAnimalTypeAsync(id);
             return NoContent();
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAnimalTypeAsync([FromRoute] int id, [FromBody] AnimalTypeRequest request)
         {
             var updatedEntity = await _animalTypeService.UpdateAnimalTypeAsync(id, request);
             return Ok(updatedEntity);
-        }
-
-        [HttpGet("{id}/breeds")]
-        public async Task<IActionResult> GetBreedsForAnimalType([FromRoute] int id)
-        {
-            var breeds = await _breedService.GetBreedsByAnimalTypeIdAsync(id);
-            return Ok(breeds);
         }
     }
 }

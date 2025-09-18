@@ -8,7 +8,7 @@ namespace API_Banho_Tosa.Application.Breeds.Services
         Task<BreedResponse> GetBreedByIdAsync(int id);
         Task<IReadOnlyCollection<BreedResponse>> SearchBreedsAsync(SearchBreedRequest searchParams);
         Task<BreedResponse> UpdateBreedAsync(int id, UpdateBreedRequest request);
-        Task DeleteBreedByIdAsync(int id, string? requestingIpAddress);
+        Task DeleteBreedByIdAsync(int id);
         Task<IReadOnlyCollection<BreedResponse>> GetBreedsByAnimalTypeIdAsync(int animalTypeId);
     }
 }

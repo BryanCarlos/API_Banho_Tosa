@@ -1,9 +1,12 @@
 ﻿using API_Banho_Tosa.Application.Breeds.DTOs;
 using API_Banho_Tosa.Application.Breeds.Services;
+using API_Banho_Tosa.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/api/breeds")]
     public class BreedController : ControllerBase
@@ -30,6 +33,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(breed);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateBreedAsync([FromBody] CreateBreedRequest request)
         {
@@ -42,6 +46,7 @@ namespace API_Banho_Tosa.API.Controllers
             );
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBreedAsync([FromRoute] int id, [FromBody] UpdateBreedRequest request)
         {
@@ -49,12 +54,11 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(updatedBreed);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBreedAsync([FromRoute] int id)
         {
-            var requestingIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-
-            await _breedService.DeleteBreedByIdAsync(id, requestingIpAddress);
+            await _breedService.DeleteBreedByIdAsync(id);
             return NoContent();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using API_Banho_Tosa.Application.Breeds.DTOs;
 using API_Banho_Tosa.Application.Breeds.Mappers;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
 
@@ -9,12 +10,14 @@ namespace API_Banho_Tosa.Application.Breeds.Services
     {
         private readonly IBreedRepository _breedRepository;
         private readonly IAnimalTypeRepository _animalTypeRepository;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ILogger<BreedService> _logger;
 
-        public BreedService(IBreedRepository breedRepository, IAnimalTypeRepository animalTypeRepository, ILogger<BreedService> logger)
+        public BreedService(IBreedRepository breedRepository, IAnimalTypeRepository animalTypeRepository, ICurrentUserService currentUserService, ILogger<BreedService> logger)
         {
             this._breedRepository = breedRepository;
             this._animalTypeRepository = animalTypeRepository;
+            this._currentUserService = currentUserService;
             this._logger = logger;
         }
 
@@ -42,9 +45,11 @@ namespace API_Banho_Tosa.Application.Breeds.Services
             await _breedRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "New breed '{BreedName}' (ID: {BreedId}) created successfully.",
+                "New breed '{BreedName}' (ID: {BreedId}) created successfully by user {RequestingUserId} (Name: {RequestingUsername}).",
                 breed.Name,
-                breed.Id
+                breed.Id,
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A"
             );
 
             var createdBreedWithDetails = await _breedRepository.GetBreedByIdAsync(breed.Id);
@@ -58,7 +63,7 @@ namespace API_Banho_Tosa.Application.Breeds.Services
             return createdBreedWithDetails.ToResponseDto();
         }
 
-        public async Task DeleteBreedByIdAsync(int id, string? requestingIpAddress)
+        public async Task DeleteBreedByIdAsync(int id)
         {
             var breedToDelete = await _breedRepository.GetBreedByIdAsync(id);
 
@@ -72,10 +77,11 @@ namespace API_Banho_Tosa.Application.Breeds.Services
             await _breedRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Breed '{BreedName}' (ID: {BreedId}) deleted successfully by IP {RequestingIpAddress}.",
+                "Breed '{BreedName}' (ID: {BreedId}) deleted successfully by  by user {RequestingUserId} (Name: {RequestingUsername}).",
                 breedToDelete.Name,
                 id,
-                requestingIpAddress ?? "N/A"
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A"
             );
         }
 
@@ -146,9 +152,11 @@ namespace API_Banho_Tosa.Application.Breeds.Services
             await _breedRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Breed '{OriginalBreedName}' (ID: {BreedId}) updated successfully. Changes: {@Changes}",
+                "Breed '{OriginalBreedName}' (ID: {BreedId}) updated successfully by user {RequestingUserId} (Name: {RequestingUsername}). Changes: {@Changes}",
                 oldData.Name,
                 id,
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A",
                 new { Old = oldData, New = newData }
             );
 

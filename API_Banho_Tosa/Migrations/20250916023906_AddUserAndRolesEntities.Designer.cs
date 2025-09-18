@@ -3,6 +3,7 @@ using System;
 using API_Banho_Tosa.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_Banho_Tosa.Migrations
 {
     [DbContext(typeof(BanhoTosaContext))]
-    partial class BanhoTosaContextModelSnapshot : ModelSnapshot
+    [Migration("20250916023906_AddUserAndRolesEntities")]
+    partial class AddUserAndRolesEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -234,23 +237,20 @@ namespace API_Banho_Tosa.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RefreshToken")
-                        .IsUnique();
-
                     b.ToTable("users");
                 });
 
             modelBuilder.Entity("users_roles", b =>
                 {
-                    b.Property<int>("role_id")
+                    b.Property<int>("RolesId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("user_id")
+                    b.Property<Guid>("UsersId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("role_id", "user_id");
+                    b.HasKey("RolesId", "UsersId");
 
-                    b.HasIndex("user_id");
+                    b.HasIndex("UsersId");
 
                     b.ToTable("users_roles");
                 });
@@ -270,13 +270,13 @@ namespace API_Banho_Tosa.Migrations
                 {
                     b.HasOne("API_Banho_Tosa.Domain.Entities.Role", null)
                         .WithMany()
-                        .HasForeignKey("role_id")
+                        .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("API_Banho_Tosa.Domain.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("user_id")
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
