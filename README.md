@@ -22,6 +22,7 @@ Este projeto foi construído com as seguintes tecnologias e conceitos de arquite
 
 * **Framework:** .NET 8, ASP.NET Core
 * **Linguagem:** C# 12
+* **Segurança:** Autenticação com JWT (JSON Web Tokens)
 * **Banco de Dados:** PostgreSQL
 * **ORM:** Entity Framework Core 8
 * **Observabilidade:**
@@ -80,13 +81,16 @@ dotnet user-secrets init
 ```
 
 **4. Configure a Conexão com o Banco de Dados:**
-Agora, adicione sua connection string ao "cofre". Substitua os valores pelos do seu banco de dados PostgreSQL local.
 
-* **Banco de Dados:**
+* **Banco de Dados:** Adicione sua connection string ao "cofre". Substitua os valores pelos do seu banco de dados PostgreSQL local.
 ```bash
 dotnet user-secrets set "ConnectionStrings:BanhoTosaContext" "Host=localhost;Port=5432;Database=db_pet_control;Username=seu_usuario;Password=sua_senha"
 ```
-* **Datadog (Opcional):**
+**Chave do Token JWT (Obrigatório):** Gere uma chave segura e a configure. Você pode usar um gerador online ou o próprio C# para criar uma chave de 64 bytes em Base64.
+  ```bash
+  dotnet user-secrets set "AppSettings:Token" "SUA_CHAVE_SUPER_SECRETA_GERADA_AQUI"
+  ```
+* **Datadog (Opcional):**: Informe a sua API Key que foi gerada a partir da criação da sua conta.
 ```bash
 dotnet user-secrets set "Datadog:ApiKey" "sua_api_key_do_datadog"
 ```
