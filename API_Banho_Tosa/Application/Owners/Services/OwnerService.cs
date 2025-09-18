@@ -1,4 +1,5 @@
-﻿using API_Banho_Tosa.Application.Owners.DTOs;
+﻿using API_Banho_Tosa.Application.Common.Interfaces;
+using API_Banho_Tosa.Application.Owners.DTOs;
 using API_Banho_Tosa.Application.Owners.Mappers;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
@@ -9,11 +10,13 @@ namespace API_Banho_Tosa.Application.Owners.Services
     public class OwnerService : IOwnerService
     {
         private readonly IOwnerRepository _ownerRepository;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ILogger<OwnerService> _logger;
 
-        public OwnerService(IOwnerRepository repository, ILogger<OwnerService> logger)
+        public OwnerService(IOwnerRepository repository, ICurrentUserService currentUserService, ILogger<OwnerService> logger)
         {
             _ownerRepository = repository;
+            _currentUserService = currentUserService;
             _logger = logger;
         }
 
@@ -81,26 +84,22 @@ namespace API_Banho_Tosa.Application.Owners.Services
             return ownersList.MapToEnumerableResponse();
         }
 
-        public async Task <IEnumerable<OwnerResponseFullInfo>> GetOwnersFullInfo(string? requestingIpAddress)
+        public async Task <IEnumerable<OwnerResponseFullInfo>> GetOwnersFullInfo()
         {
-            _logger.LogInformation(
-                "IP {RequestingIpAddress} is searching for full info from all owners",
-                requestingIpAddress ?? "N/A"
-            );
-
             var owners = await _ownerRepository.GetOwnersAsync();
             var ownersList = owners.ToList();
 
             _logger.LogInformation(
-                "Search from IP {RequestingIpAddress} found {OwnersFoundCount} owners with full info.",
-                requestingIpAddress ?? "N/A",
+                "Search from user {RequestingUserId} (Name: {RequestingUsername}) found {OwnersFoundCount} owners with full info.",
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A",
                 ownersList.Count
             );
 
             return ownersList.MapToEnumerableFullInfoResponse();
         }
 
-        public async Task DeleteOwnerByUuid(Guid uuid, string? requestingIpAddress)
+        public async Task DeleteOwnerByUuid(Guid uuid)
         {
             var ownerToDelete = await _ownerRepository.GetOwnerByUuidAsync(uuid);
 
@@ -114,9 +113,10 @@ namespace API_Banho_Tosa.Application.Owners.Services
             await _ownerRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Owner with UUID {OwnerUuid} deleted successfully by IP {RequestingIpAddress}.",
+                "Owner with UUID {OwnerUuid} deleted successfully by user {RequestingUserId} (Name: {RequestingUsername}).",
                 uuid,
-                requestingIpAddress ?? "N/A"
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A"
             );
         }
 
@@ -133,19 +133,15 @@ namespace API_Banho_Tosa.Application.Owners.Services
             return owner.MapToResponse();
         }
 
-        public async Task<IEnumerable<OwnerResponseFullInfo>> GetArchivedOwners(string? requestingIpAddress)
+        public async Task<IEnumerable<OwnerResponseFullInfo>> GetArchivedOwners()
         {
-            _logger.LogInformation(
-                "IP {RequestingIpAddress} is searching for archived owners (deleted ones)",
-                requestingIpAddress ?? "N/A"
-            );
-
             var archivedOwners = await _ownerRepository.GetArchivedOwnersAsync();
             var archivedOwnersList = archivedOwners.ToList();
 
             _logger.LogInformation(
-               "Search from IP {RequestingIpAddress} found {OwnersFoundCount} archived owners.",
-               requestingIpAddress ?? "N/A",
+               "Search from user {RequestingUserId} (Name: {RequestingUsername}) found {OwnersFoundCount} archived owners.",
+               _currentUserService.UserId.ToString() ?? "N/A",
+               _currentUserService.Username ?? "N/A",
                archivedOwnersList.Count
            );
 
@@ -185,19 +181,22 @@ namespace API_Banho_Tosa.Application.Owners.Services
             await _ownerRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Owner {OwnerUuid} updated successfully. Changes {@Changes}",
+                "Owner {OwnerUuid} updated successfully by user {RequestingUserId} (Name: {RequestingUsername}). Changes {@Changes}",
                 uuid,
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A",
                 new { Old = oldData, New = newData }
             );
 
             return owner.MapToResponse();
         }
 
-        public async Task<OwnerResponse> ReactivateOwner(Guid uuid, string? requestingIpAddress)
+        public async Task<OwnerResponse> ReactivateOwner(Guid uuid)
         {
             _logger.LogInformation(
-                "IP {RequestingIpAddress} is trying to reactivate an deleted owner with UUID {OwnerUuid}",
-                requestingIpAddress ?? "N/A",
+                "User {RequestingUserId} (Name: {RequestingUsername}) is trying to reactivate an deleted owner with UUID {OwnerUuid}",
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A",
                 uuid
             );
 
@@ -213,9 +212,10 @@ namespace API_Banho_Tosa.Application.Owners.Services
             await _ownerRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Owner with UUID {OwnerUuid} reactivated by IP {RequestingIpAddress}",
+                "Owner with UUID {OwnerUuid} reactivated by user {RequestingUserId} (Name: {RequestingUsername})",
                 uuid,
-                requestingIpAddress ?? "N/A"
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A"
             );
 
             return owner.MapToResponse();

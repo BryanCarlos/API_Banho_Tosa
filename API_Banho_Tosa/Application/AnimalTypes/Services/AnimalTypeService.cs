@@ -1,5 +1,6 @@
 ﻿using API_Banho_Tosa.Application.AnimalTypes.DTOs;
 using API_Banho_Tosa.Application.AnimalTypes.Mappers;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
 using System;
@@ -9,11 +10,13 @@ namespace API_Banho_Tosa.Application.AnimalTypes.Services
     public class AnimalTypeService : IAnimalTypeService
     {
         private readonly IAnimalTypeRepository _animalTypeRepository;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ILogger<AnimalTypeService> _logger;
 
-        public AnimalTypeService(IAnimalTypeRepository repository, ILogger<AnimalTypeService> logger)
+        public AnimalTypeService(IAnimalTypeRepository repository, ICurrentUserService currentUserService, ILogger<AnimalTypeService> logger)
         {
             _animalTypeRepository = repository;
+            _currentUserService = currentUserService;
             _logger = logger;
         }
 
@@ -30,15 +33,17 @@ namespace API_Banho_Tosa.Application.AnimalTypes.Services
             await _animalTypeRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "New animal type '{AnimalTypeName}' with ID {AnimalTypeId} was created.",
+                "New animal type '{AnimalTypeName}' with ID {AnimalTypeId} was created by {RequestingUserId} (Name: {RequestingUsername}).",
                 animalType.Name,
-                animalType.Id
+                animalType.Id,
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A"
             );
 
             return animalType.ToResponseDto();
         }
 
-        public async Task DeleteAnimalTypeAsync(int id, string? requestingIpAddress)
+        public async Task DeleteAnimalTypeAsync(int id)
         {
             var animalTypeToDelete = await _animalTypeRepository.GetAnimalTypeByIdAsync(id);
 
@@ -52,10 +57,11 @@ namespace API_Banho_Tosa.Application.AnimalTypes.Services
             await _animalTypeRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Animal type '{AnimalTypeName}' with ID {AnimalTypeId} deleted successfully by IP {RequestingIpAddress}.",
+                "Animal type '{AnimalTypeName}' with ID {AnimalTypeId} deleted successfully by user {RequestingUserId} (Name: {RequestingUserName}).",
                 animalTypeToDelete.Name,
                 id,
-                requestingIpAddress ?? "N/A"
+                _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A"
             );
         }
 
@@ -133,9 +139,11 @@ namespace API_Banho_Tosa.Application.AnimalTypes.Services
             await _animalTypeRepository.SaveChangesAsync();
 
             _logger.LogInformation(
-                "Animal type {AnimalTypeName} with ID {AnimalTypeId} updated successfully. Changes {@Changes}",
+                "Animal type {AnimalTypeName} with ID {AnimalTypeId} updated successfully by user {RequestingUserId} (Name: {RequestingUserName}). Changes {@Changes}",
                 animalTypeToUpdate.Name,
                 id,
+                 _currentUserService.UserId.ToString() ?? "N/A",
+                _currentUserService.Username ?? "N/A",
                 new { Old = oldData, New = newData }
             );
 
