@@ -27,7 +27,7 @@ namespace API_Banho_Tosa.Application.Owners.Mappers
             return owners.Select(MapToFullInfoResponse);
         }
 
-        public static OwnerResponseFullInfo MapToFullInfoResponse(this Owner owner)
+        private static OwnerResponseFullInfo MapToFullInfoResponse(this Owner owner)
         {
             return new OwnerResponseFullInfo
             (

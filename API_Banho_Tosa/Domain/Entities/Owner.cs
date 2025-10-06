@@ -33,6 +33,8 @@ namespace API_Banho_Tosa.Domain.Entities
         [Column("deleted_at")]
         public DateTime? DeletedAt { get; private set; }
 
+        public ICollection<Pet> Pets { get; } = new List<Pet>();
+
         // Construtor para o EF
         private Owner() { }
 

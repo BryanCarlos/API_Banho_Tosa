@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API_Banho_Tosa.Application.Common.Exceptions;
+using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Reflection.Metadata;
 using System.Text.Json;
@@ -38,8 +39,14 @@ namespace API_Banho_Tosa.Middleware
                 KeyNotFoundException =>
                     (HttpStatusCode.NotFound, exception.Message),
 
-                InvalidOperationException =>
+                InvalidOperationException or UserAlreadyExistsException or PetSizeAlreadyExistsException =>
                     (HttpStatusCode.Conflict, exception.Message),
+
+                UnauthorizedAccessException =>
+                    (HttpStatusCode.Unauthorized, exception.Message),
+
+                ConfigurationException =>
+                    (HttpStatusCode.Unauthorized, exception.Message),
 
                 _ =>
                     (HttpStatusCode.InternalServerError, "An unexpected server error occurred.")
