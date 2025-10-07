@@ -5,6 +5,7 @@ using API_Banho_Tosa.Application.Auth.Services;
 using API_Banho_Tosa.Application.Breeds.Services;
 using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Application.Owners.Services;
+using API_Banho_Tosa.Application.PetSizes.Services;
 using API_Banho_Tosa.Application.Users.Services;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Infrastructure.Auth;
@@ -63,7 +64,7 @@ namespace API_Banho_Tosa
             builder.Host.UseSerilog();
 
             builder.Services.AddDbContext<BanhoTosaContext>(opt =>
-            opt.UseNpgsql(builder.Configuration.GetConnectionString("BanhoTosaContext")));
+                opt.UseNpgsql(builder.Configuration.GetConnectionString("BanhoTosaContext")));
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -85,8 +86,6 @@ namespace API_Banho_Tosa
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-            builder.Services.AddScoped<BanhoTosaContext>();
-
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
             builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
@@ -104,6 +103,9 @@ namespace API_Banho_Tosa
 
             builder.Services.AddScoped<IBreedRepository, BreedRepository>();
             builder.Services.AddScoped<IBreedService, BreedService>();
+
+            builder.Services.AddScoped<IPetSizeRepository, PetSizeRepository>();
+            builder.Services.AddScoped<IPetSizeService, PetSizeService>();
 
             builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -154,7 +156,7 @@ namespace API_Banho_Tosa
 
             var app = builder.Build();
 
-            app.UseMiddleware<RequestLoggingMiddleware>();
+            app.UseSerilogRequestLogging();
             app.UseMiddleware<GlobalExceptionsHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.

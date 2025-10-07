@@ -16,6 +16,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
         public DbSet<Breed> Breeds { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<PetSize> PetSizes { get; set; }
+        public DbSet<Pet> Pets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -106,17 +108,50 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
                 });
 
             modelBuilder.Entity<User>()
-            .HasMany(u => u.Roles)
-            .WithMany(r => r.Users)
-            .UsingEntity<Dictionary<string, object>>(
-                "users_roles",
-                j => j.HasOne<Role>()
-                      .WithMany()
-                      .HasForeignKey("role_id"),
-                j => j.HasOne<User>()
-                      .WithMany()
-                      .HasForeignKey("user_id")
+                .HasMany(u => u.Roles)
+                .WithMany(r => r.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "users_roles",
+                    j => j.HasOne<Role>()
+                          .WithMany()
+                          .HasForeignKey("role_id"),
+                    l => l.HasOne<User>()
+                          .WithMany()
+                          .HasForeignKey("user_id")
             );
+
+            #endregion
+
+            #region PetSize builder
+
+            modelBuilder
+                .Entity<PetSize>()
+                .Property(p => p.Id)
+                .UseIdentityColumn();
+
+            #endregion
+
+            #region Pet builder
+
+            modelBuilder
+                .Entity<Pet>(pet =>
+                {
+                    pet.HasQueryFilter(p => p.DeletedAt == null);
+                });
+
+            modelBuilder
+                .Entity<Pet>()
+                .HasMany(p => p.Owners)
+                .WithMany(o => o.Pets)
+                .UsingEntity<Dictionary<string, object>>(
+                    "pets_owners",
+                    j => j.HasOne<Owner>()
+                          .WithMany()
+                          .HasForeignKey("owner_id"),
+                    l => l.HasOne<Pet>()
+                          .WithMany()
+                          .HasForeignKey("pet_id")
+                );
 
             #endregion
         }
