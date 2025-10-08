@@ -1,9 +1,8 @@
 ﻿using API_Banho_Tosa.Application.Auth.DTOs;
 using API_Banho_Tosa.Application.Auth.Services;
-using API_Banho_Tosa.Domain.Constants;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API_Banho_Tosa.API.Controllers
 {
@@ -12,10 +11,12 @@ namespace API_Banho_Tosa.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUserService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ICurrentUserService currentUserService)
         {
             _authService = authService;
+            _currentUserService = currentUserService;
         }
 
         [HttpPost("register")]
@@ -47,15 +48,15 @@ namespace API_Banho_Tosa.API.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> LogoutAsync()
         {
-            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userUuid = _currentUserService.UserId;
 
-            if (!Guid.TryParse(userIdClaim, out var userUuid))
+            if (userUuid is null)
             {
-                return BadRequest("Invalid user ID in the token.");
+                return Unauthorized("Invalid user ID in the token.");
             }
 
-            await _authService.LogoutAsync(userUuid);
-            return Ok("Successful logout");
+            await _authService.LogoutAsync(userUuid.Value);
+            return NoContent();
         }
     }
 }
