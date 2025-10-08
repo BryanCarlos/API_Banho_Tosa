@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_Banho_Tosa.Migrations
 {
     [DbContext(typeof(BanhoTosaContext))]
-    [Migration("20250916030027_UserAndRolesTableFix")]
-    partial class UserAndRolesTableFix
+    [Migration("20251007015701_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,6 +132,82 @@ namespace API_Banho_Tosa.Migrations
                     b.ToTable("owners");
                 });
 
+            modelBuilder.Entity("API_Banho_Tosa.Domain.Entities.Pet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("pet_id");
+
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pet_birthdate");
+
+                    b.Property<int>("BreedId")
+                        .HasColumnType("integer")
+                        .HasColumnName("breed_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("LatestVisit")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pet_latest_visit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("pet_name");
+
+                    b.Property<int>("PetSizeId")
+                        .HasColumnType("integer")
+                        .HasColumnName("pet_size_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BreedId");
+
+                    b.HasIndex("PetSizeId");
+
+                    b.ToTable("pets");
+                });
+
+            modelBuilder.Entity("API_Banho_Tosa.Domain.Entities.PetSize", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("pet_size_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("pet_size_description");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("pet_sizes");
+                });
+
             modelBuilder.Entity("API_Banho_Tosa.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -237,7 +313,25 @@ namespace API_Banho_Tosa.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RefreshToken")
+                        .IsUnique();
+
                     b.ToTable("users");
+                });
+
+            modelBuilder.Entity("pets_owners", b =>
+                {
+                    b.Property<int>("owner_id")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("pet_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("owner_id", "pet_id");
+
+                    b.HasIndex("pet_id");
+
+                    b.ToTable("pets_owners");
                 });
 
             modelBuilder.Entity("users_roles", b =>
@@ -266,6 +360,40 @@ namespace API_Banho_Tosa.Migrations
                     b.Navigation("AnimalType");
                 });
 
+            modelBuilder.Entity("API_Banho_Tosa.Domain.Entities.Pet", b =>
+                {
+                    b.HasOne("API_Banho_Tosa.Domain.Entities.Breed", "Breed")
+                        .WithMany()
+                        .HasForeignKey("BreedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API_Banho_Tosa.Domain.Entities.PetSize", "PetSize")
+                        .WithMany("Pets")
+                        .HasForeignKey("PetSizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Breed");
+
+                    b.Navigation("PetSize");
+                });
+
+            modelBuilder.Entity("pets_owners", b =>
+                {
+                    b.HasOne("API_Banho_Tosa.Domain.Entities.Owner", null)
+                        .WithMany()
+                        .HasForeignKey("owner_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API_Banho_Tosa.Domain.Entities.Pet", null)
+                        .WithMany()
+                        .HasForeignKey("pet_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("users_roles", b =>
                 {
                     b.HasOne("API_Banho_Tosa.Domain.Entities.Role", null)
@@ -284,6 +412,11 @@ namespace API_Banho_Tosa.Migrations
             modelBuilder.Entity("API_Banho_Tosa.Domain.Entities.AnimalType", b =>
                 {
                     b.Navigation("Breeds");
+                });
+
+            modelBuilder.Entity("API_Banho_Tosa.Domain.Entities.PetSize", b =>
+                {
+                    b.Navigation("Pets");
                 });
 #pragma warning restore 612, 618
         }

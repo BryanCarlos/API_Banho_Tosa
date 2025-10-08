@@ -39,7 +39,7 @@ namespace API_Banho_Tosa.Middleware
                 KeyNotFoundException =>
                     (HttpStatusCode.NotFound, exception.Message),
 
-                InvalidOperationException or UserAlreadyExistsException =>
+                InvalidOperationException or UserAlreadyExistsException or PetSizeAlreadyExistsException =>
                     (HttpStatusCode.Conflict, exception.Message),
 
                 UnauthorizedAccessException =>
