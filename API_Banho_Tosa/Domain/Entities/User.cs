@@ -58,13 +58,15 @@ namespace API_Banho_Tosa.Domain.Entities
 
         private User(Email email, string username, string passwordHash)
         {
+            var now = DateTime.UtcNow;
             this.Id = Guid.CreateVersion7();
             this.Email = email;
             this.Username = username;
             this.PasswordHash = passwordHash;
             this.IsEmailConfirmed = false;
+            this.EmailConfirmationToken = Guid.CreateVersion7().ToString();
+            this.EmailTokenExpiryDate = now.AddDays(1);
 
-            var now = DateTime.UtcNow;
             this.CreatedAt = now;
             this.UpdatedAt = now;
         }
@@ -160,6 +162,14 @@ namespace API_Banho_Tosa.Domain.Entities
         public void UpdateLastLogin()
         {
             this.LastLogin = DateTime.UtcNow;
+        }
+
+        public void ConfirmEmail()
+        {
+            this.IsEmailConfirmed = true;
+            this.EmailConfirmationToken = null;
+            this.EmailTokenExpiryDate = null;
+            MarkAsUpdated();
         }
     }
 }

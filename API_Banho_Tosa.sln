@@ -17,6 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BanhoTosa.Application.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanhoTosa.Application.Tests", "Tests\BanhoTosa.Application.Tests\BanhoTosa.Application.Tests.csproj", "{2121AC55-A3AF-4A78-B20C-F1AD74170D79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetShop.Shared.Contracts", "PetShop.Shared.Contracts\PetShop.Shared.Contracts.csproj", "{102FD388-E430-4B31-B90D-289C40351EC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetShop.Worker.Email", "PetShop.Worker.Email\PetShop.Worker.Email.csproj", "{75CDD8E7-EE3F-4CF1-907B-736A4F0BE2EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,14 @@ Global
 		{2121AC55-A3AF-4A78-B20C-F1AD74170D79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2121AC55-A3AF-4A78-B20C-F1AD74170D79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2121AC55-A3AF-4A78-B20C-F1AD74170D79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{102FD388-E430-4B31-B90D-289C40351EC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{102FD388-E430-4B31-B90D-289C40351EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{102FD388-E430-4B31-B90D-289C40351EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{102FD388-E430-4B31-B90D-289C40351EC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75CDD8E7-EE3F-4CF1-907B-736A4F0BE2EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75CDD8E7-EE3F-4CF1-907B-736A4F0BE2EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75CDD8E7-EE3F-4CF1-907B-736A4F0BE2EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75CDD8E7-EE3F-4CF1-907B-736A4F0BE2EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +57,8 @@ Global
 		{C60CC9B6-5E90-4CD4-A62C-6A947FD5ECF0} = {978A1766-9A52-414F-819E-B5699F70781C}
 		{E95032AB-6F6B-49A0-BB57-F72DC9CF3926} = {E0BFBD04-A718-4688-BD16-23CD87EEC7E5}
 		{2121AC55-A3AF-4A78-B20C-F1AD74170D79} = {E95032AB-6F6B-49A0-BB57-F72DC9CF3926}
+		{102FD388-E430-4B31-B90D-289C40351EC1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{75CDD8E7-EE3F-4CF1-907B-736A4F0BE2EA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E1CBA21-8518-4E6E-8081-94FC3C84D2DF}

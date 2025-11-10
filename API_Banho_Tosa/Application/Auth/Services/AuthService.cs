@@ -2,10 +2,12 @@
 using API_Banho_Tosa.Application.Auth.Interfaces;
 using API_Banho_Tosa.Application.Auth.Mappers;
 using API_Banho_Tosa.Application.Common.Exceptions;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Domain.Constants;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Domain.ValueObjects;
+using PetShop.Shared.Contracts.Events;
 using System;
 
 namespace API_Banho_Tosa.Application.Auth.Services
@@ -16,14 +18,16 @@ namespace API_Banho_Tosa.Application.Auth.Services
         private readonly IRoleRepository _roleRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenGenerator _tokenGenerator;
+        private readonly IMessagePublisher _messagePublisher;
         private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordHasher passwordHasher, ITokenGenerator tokenGenerator, ILogger<AuthService> logger)
+        public AuthService(IUserRepository userRepository, IRoleRepository roleRepository, IPasswordHasher passwordHasher, ITokenGenerator tokenGenerator, IMessagePublisher messagePublisher, ILogger<AuthService> logger)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _passwordHasher = passwordHasher;
             _tokenGenerator = tokenGenerator;
+            _messagePublisher = messagePublisher;
             _logger = logger;
         }
 
@@ -44,7 +48,6 @@ namespace API_Banho_Tosa.Application.Auth.Services
 
             return await CreateAndReturnUserToken(user);
         }
-
 
         public async Task<TokenResponse> RefreshTokensAsync(RefreshTokenRequest request)
         {
@@ -85,7 +88,7 @@ namespace API_Banho_Tosa.Application.Auth.Services
             if (defaultRole == null)
             {
                 _logger.LogCritical(
-                    "CRITICAL FAILURE: The default role {defaultRole} was not found in the database. User registration is blocked.",
+                    "CRITICAL FAILURE: The default role {DefaultRole} was not found in the database. User registration is blocked.",
                     AppRoles.User
                 );
 
@@ -97,7 +100,8 @@ namespace API_Banho_Tosa.Application.Auth.Services
             _userRepository.InsertUser(user);
             await _userRepository.SaveChangesAsync();
 
-            // TODO: Create a RabbitMQ queue to send email confirmation token
+            var userRegisteredEvent = new UserRegisteredEvent(userEmail.Value, user.EmailConfirmationToken!, user.EmailTokenExpiryDate!.Value);
+            await _messagePublisher.PublishAsync(userRegisteredEvent);
 
             return user.ToResponse();
         }
@@ -126,6 +130,39 @@ namespace API_Banho_Tosa.Application.Auth.Services
             await _userRepository.SaveChangesAsync();
 
             return tokenResponse;
+        }
+
+        public async Task<bool> ConfirmEmailAsync(string token)
+        {
+            var user = await _userRepository.GetUserByConfirmationTokenAsync(token);
+
+            if (user == null)
+            {
+                _logger.LogWarning("Attempted to confirm an user with confirmation token that starts with {ConfirmationToken} and was not able to find any user.", token.ToString().Substring(0, 10));
+                //throw new KeyNotFoundException($"User with token {token} not found");
+                return false;
+            }
+
+            if (user.IsEmailConfirmed)
+            {
+                //throw new InvalidOperationException("User already confirmed his email.");
+                _logger.LogWarning("Attempted to confirm an user with email {UserEmail} that has already confirmed his email.", user.Email.ToString());
+                return false;
+            }
+
+            if (DateTime.UtcNow >= user.EmailTokenExpiryDate)
+            {
+                //throw new InvalidOperationException("The token has expired.");
+                _logger.LogWarning("User with email {UserEmail} tried to use an expired token to confirm his email.", user.Email.ToString());
+                return false;
+            }
+
+            user.ConfirmEmail();
+            await _userRepository.SaveChangesAsync();
+
+            _logger.LogInformation("{UserName} confirmed his email successfully.", user.Username);
+
+            return true;
         }
     }
 }
