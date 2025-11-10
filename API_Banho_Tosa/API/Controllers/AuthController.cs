@@ -44,6 +44,19 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string token)
+        {
+            var success = await _authService.ConfirmEmailAsync(token);
+
+            if (success)
+            {
+                return Redirect("https://www.youtube.com/watch?v=h4HtMNoOTPQ");
+            }
+
+            return Redirect("https://www.youtube.com/watch?v=HIp8sFB2GGw");
+        }
+
         [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> LogoutAsync()

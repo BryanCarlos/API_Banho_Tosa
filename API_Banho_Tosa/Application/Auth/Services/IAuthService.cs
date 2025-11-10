@@ -8,5 +8,6 @@ namespace API_Banho_Tosa.Application.Auth.Services
         Task<TokenResponse> LoginAsync(UserLoginRequest request);
         Task<TokenResponse> RefreshTokensAsync(RefreshTokenRequest request);
         Task LogoutAsync(Guid userId);
+        Task<bool> ConfirmEmailAsync(string token);
     }
 }

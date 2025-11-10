@@ -9,6 +9,7 @@ namespace API_Banho_Tosa.Domain.Interfaces
         Task<User?> GetUserByIdAsync(Guid id);
         Task<User?> GetUserByEmailAsync(Email email);
         Task<User?> GetUserByRefreshTokenAsync(string refreshToken);
+        Task<User?> GetUserByConfirmationTokenAsync(string token);
         void InsertUser(User user);
         Task<int> SaveChangesAsync();
     }

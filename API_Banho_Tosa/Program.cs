@@ -9,6 +9,7 @@ using API_Banho_Tosa.Application.PetSizes.Services;
 using API_Banho_Tosa.Application.Users.Services;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Infrastructure.Auth;
+using API_Banho_Tosa.Infrastructure.Messaging;
 using API_Banho_Tosa.Infrastructure.Persistence;
 using API_Banho_Tosa.Infrastructure.Persistence.Repositories;
 using API_Banho_Tosa.Middleware;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Sinks.Datadog.Logs;
@@ -26,7 +28,7 @@ namespace API_Banho_Tosa
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +84,16 @@ namespace API_Banho_Tosa
                         ClockSkew = TimeSpan.Zero
                     };
                 });
+
+            var factory = new ConnectionFactory
+            {
+                HostName = builder.Configuration["RabbitMQ:HostName"]!,
+                
+            };
+            var rabbitConnection = await factory.CreateConnectionAsync();
+
+            builder.Services.AddSingleton(rabbitConnection);
+            builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();

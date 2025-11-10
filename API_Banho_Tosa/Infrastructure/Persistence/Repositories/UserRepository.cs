@@ -14,6 +14,11 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Repositories
             _context = context;
         }
 
+        public Task<User?> GetUserByConfirmationTokenAsync(string token)
+        {
+            return _context.Users.FirstOrDefaultAsync(u => u.EmailConfirmationToken == token);
+        }
+
         public async Task<User?> GetUserByEmailAsync(Email email)
         {
             return await _context.Users
@@ -40,5 +45,6 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Repositories
         {
             return await _context.SaveChangesAsync();
         }
+
     }
 }
