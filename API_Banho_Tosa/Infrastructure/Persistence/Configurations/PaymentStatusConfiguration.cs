@@ -19,7 +19,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
 
             builder.Property(ps => ps.Description)
                    .HasColumnName("payment_status_description")
-                   .HasMaxLength(100);
+                   .HasMaxLength(100)
+                   .IsRequired();
         }
     }
 }
