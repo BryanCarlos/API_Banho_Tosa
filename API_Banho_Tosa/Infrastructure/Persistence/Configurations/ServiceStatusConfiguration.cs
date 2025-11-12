@@ -21,6 +21,11 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
                    .HasColumnName("service_status_description")
                    .HasMaxLength(100)
                    .IsRequired();
+
+            builder.HasMany(ss => ss.Services)
+                   .WithOne(s => s.ServiceStatus)
+                   .HasForeignKey(s => s.ServiceStatusId)
+                   .IsRequired();
         }
     }
 }

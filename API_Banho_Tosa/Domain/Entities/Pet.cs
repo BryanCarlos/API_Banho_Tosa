@@ -41,6 +41,8 @@ namespace API_Banho_Tosa.Domain.Entities
         public PetSize PetSize { get; private set; } = null!;
         public ICollection<Owner> Owners { get; } = new List<Owner>();
 
+        public ICollection<Service> Services = new List<Service>();
+
         private Pet() { }
 
         private Pet(string name, int breedId, int petSizeId, DateTime? birthDate)
