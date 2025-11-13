@@ -18,6 +18,7 @@ namespace API_Banho_Tosa.Domain.Entities
         public DateTime UpdatedAt { get; private set; }
 
         public HashSet<Pet> Pets { get; } = new HashSet<Pet>();
+        public ICollection<ServicePrice> ServicePrices { get; private set; }
 
         private PetSize() 
         {

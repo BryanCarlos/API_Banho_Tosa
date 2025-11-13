@@ -23,6 +23,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BanhoTosaContext).Assembly);
+
             #region Owner builder
 
             modelBuilder.Entity<Owner>(owner =>
@@ -133,25 +135,22 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
 
             #region Pet builder
 
-            modelBuilder
-                .Entity<Pet>(pet =>
-                {
-                    pet.HasQueryFilter(p => p.DeletedAt == null);
-                });
+            modelBuilder.Entity<Pet>(pet =>
+            {
+                pet.HasQueryFilter(p => p.DeletedAt == null);
 
-            modelBuilder
-                .Entity<Pet>()
-                .HasMany(p => p.Owners)
-                .WithMany(o => o.Pets)
-                .UsingEntity<Dictionary<string, object>>(
-                    "pets_owners",
-                    j => j.HasOne<Owner>()
-                          .WithMany()
-                          .HasForeignKey("owner_id"),
-                    l => l.HasOne<Pet>()
-                          .WithMany()
-                          .HasForeignKey("pet_id")
-                );
+                pet.HasMany(p => p.Owners)
+                    .WithMany(o => o.Pets)
+                    .UsingEntity<Dictionary<string, object>>(
+                        "pets_owners",
+                        j => j.HasOne<Owner>()
+                                .WithMany()
+                                .HasForeignKey("owner_id"),
+                        l => l.HasOne<Pet>()
+                                .WithMany()
+                                .HasForeignKey("pet_id")
+                    );
+            });
 
             #endregion
         }
