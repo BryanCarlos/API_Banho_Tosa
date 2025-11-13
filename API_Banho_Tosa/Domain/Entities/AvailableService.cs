@@ -10,5 +10,7 @@
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public DateTime? DeletedAt { get; private set; }
+
+        public ICollection<ServicePrice> ServicePrices { get; private set; } = new List<ServicePrice>();
     }
 }
