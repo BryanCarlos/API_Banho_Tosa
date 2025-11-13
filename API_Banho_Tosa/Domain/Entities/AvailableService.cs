@@ -12,5 +12,6 @@
         public DateTime? DeletedAt { get; private set; }
 
         public ICollection<ServicePrice> ServicePrices { get; private set; } = new List<ServicePrice>();
+        public ICollection<ServiceItem> ServiceItems { get; private set; } = new List<ServiceItem>();
     }
 }
