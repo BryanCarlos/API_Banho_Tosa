@@ -48,6 +48,11 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
                    .WithMany(avs => avs.ServiceItems)
                    .HasForeignKey(si => si.AvailableServiceId)
                    .IsRequired();
+
+            builder.HasQueryFilter(
+                si => si.Service.DeletedAt == null &&
+                si.Service.Pet.DeletedAt == null
+            );
         }
     }
 }

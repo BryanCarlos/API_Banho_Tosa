@@ -23,6 +23,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(BanhoTosaContext).Assembly);
+
             #region Owner builder
 
             modelBuilder.Entity<Owner>(owner =>

@@ -18,7 +18,7 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
                    .HasColumnName("service_date")
                    .IsRequired();
 
-            builder.Property(s => s.PetId)
+            builder.Property(s => s.PetUuid)
                    .HasColumnName("pet_id")
                    .IsRequired();
 
@@ -72,8 +72,13 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
 
             builder.HasOne(s => s.Pet)
                    .WithMany(p => p.Services)
-                   .HasForeignKey(s => s.PetId)
+                   .HasForeignKey(s => s.PetUuid)
                    .IsRequired();
+
+            builder.HasQueryFilter(s =>
+                s.DeletedAt == null &&
+                s.Pet.DeletedAt == null
+            );
         }
     }
 }

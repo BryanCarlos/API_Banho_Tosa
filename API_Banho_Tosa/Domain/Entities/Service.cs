@@ -6,7 +6,7 @@
         public Guid Uuid { get; private set; }
         public DateTime ServiceDate { get; private set; }
 
-        public int PetId { get; private set; }
+        public Guid PetUuid { get; private set; }
         public Pet Pet { get; private set; } = null!;
 
         public int ServiceStatusId { get; private set; }
