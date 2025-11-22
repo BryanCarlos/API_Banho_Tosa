@@ -18,6 +18,7 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
         public DbSet<Role> Roles { get; set; }
         public DbSet<PetSize> PetSizes { get; set; }
         public DbSet<Pet> Pets { get; set; }
+        public DbSet<PaymentStatus> PaymentStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

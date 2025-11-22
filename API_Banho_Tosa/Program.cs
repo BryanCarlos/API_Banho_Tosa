@@ -5,6 +5,7 @@ using API_Banho_Tosa.Application.Auth.Services;
 using API_Banho_Tosa.Application.Breeds.Services;
 using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Application.Owners.Services;
+using API_Banho_Tosa.Application.PaymentStatuses.Services;
 using API_Banho_Tosa.Application.PetSizes.Services;
 using API_Banho_Tosa.Application.Users.Services;
 using API_Banho_Tosa.Domain.Interfaces;
@@ -118,6 +119,9 @@ namespace API_Banho_Tosa
 
             builder.Services.AddScoped<IPetSizeRepository, PetSizeRepository>();
             builder.Services.AddScoped<IPetSizeService, PetSizeService>();
+
+            builder.Services.AddScoped<IPaymentStatusRepository, PaymentStatusRepository>();
+            builder.Services.AddScoped<IPaymentStatusService, PaymentStatusService>();
 
             builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>

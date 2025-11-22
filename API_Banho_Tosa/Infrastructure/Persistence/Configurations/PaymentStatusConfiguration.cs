@@ -25,7 +25,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
             builder.HasMany(ps => ps.Services)
                    .WithOne(s => s.PaymentStatus)
                    .HasForeignKey(s => s.PaymentStatusId)
-                   .IsRequired();
+                   .IsRequired()
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
