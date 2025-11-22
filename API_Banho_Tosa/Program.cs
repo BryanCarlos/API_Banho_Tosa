@@ -7,6 +7,7 @@ using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Application.Owners.Services;
 using API_Banho_Tosa.Application.PaymentStatuses.Services;
 using API_Banho_Tosa.Application.PetSizes.Services;
+using API_Banho_Tosa.Application.ServiceStatuses.Services;
 using API_Banho_Tosa.Application.Users.Services;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Infrastructure.Auth;
@@ -89,39 +90,10 @@ namespace API_Banho_Tosa
             var factory = new ConnectionFactory
             {
                 HostName = builder.Configuration["RabbitMQ:HostName"]!,
-                
+
             };
             var rabbitConnection = await factory.CreateConnectionAsync();
-
-            builder.Services.AddSingleton(rabbitConnection);
-            builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
-
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
-
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IUserService, UserService>();
-
-            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
-
-            builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
-            builder.Services.AddScoped<IOwnerService, OwnerService>();
-
-            builder.Services.AddScoped<IAnimalTypeRepository, AnimalTypeRepository>();
-            builder.Services.AddScoped<IAnimalTypeService, AnimalTypeService>();
-
-            builder.Services.AddScoped<IBreedRepository, BreedRepository>();
-            builder.Services.AddScoped<IBreedService, BreedService>();
-
-            builder.Services.AddScoped<IPetSizeRepository, PetSizeRepository>();
-            builder.Services.AddScoped<IPetSizeService, PetSizeService>();
-
-            builder.Services.AddScoped<IPaymentStatusRepository, PaymentStatusRepository>();
-            builder.Services.AddScoped<IPaymentStatusService, PaymentStatusService>();
+            CreateInstances(builder, rabbitConnection);
 
             builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -199,6 +171,42 @@ namespace API_Banho_Tosa
             {
                 Log.CloseAndFlush();
             }
+        }
+
+        private static void CreateInstances(WebApplicationBuilder builder, IConnection rabbitConnection)
+        {
+            builder.Services.AddSingleton(rabbitConnection);
+            builder.Services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IUserService, UserService>();
+
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
+            builder.Services.AddScoped<IOwnerRepository, OwnerRepository>();
+            builder.Services.AddScoped<IOwnerService, OwnerService>();
+
+            builder.Services.AddScoped<IAnimalTypeRepository, AnimalTypeRepository>();
+            builder.Services.AddScoped<IAnimalTypeService, AnimalTypeService>();
+
+            builder.Services.AddScoped<IBreedRepository, BreedRepository>();
+            builder.Services.AddScoped<IBreedService, BreedService>();
+
+            builder.Services.AddScoped<IPetSizeRepository, PetSizeRepository>();
+            builder.Services.AddScoped<IPetSizeService, PetSizeService>();
+
+            builder.Services.AddScoped<IPaymentStatusRepository, PaymentStatusRepository>();
+            builder.Services.AddScoped<IPaymentStatusService, PaymentStatusService>();
+
+            builder.Services.AddScoped<IServiceStatusRepository, ServiceStatusRepository>();
+            builder.Services.AddScoped<IServiceStatusService, ServiceStatusService>();
         }
     }
 }
