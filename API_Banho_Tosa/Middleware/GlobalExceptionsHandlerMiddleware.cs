@@ -1,5 +1,6 @@
 ﻿using API_Banho_Tosa.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Reflection.Metadata;
 using System.Text.Json;
@@ -39,7 +40,7 @@ namespace API_Banho_Tosa.Middleware
                 KeyNotFoundException =>
                     (HttpStatusCode.NotFound, exception.Message),
 
-                InvalidOperationException or UserAlreadyExistsException or PetSizeAlreadyExistsException =>
+                InvalidOperationException or UserAlreadyExistsException or PetSizeAlreadyExistsException or DuplicateItemException =>
                     (HttpStatusCode.Conflict, exception.Message),
 
                 UnauthorizedAccessException =>
@@ -47,6 +48,9 @@ namespace API_Banho_Tosa.Middleware
 
                 ConfigurationException =>
                     (HttpStatusCode.Unauthorized, exception.Message),
+
+                DbUpdateException =>
+                    (HttpStatusCode.Conflict, "This item cannot be deleted because there is data linked to it."),
 
                 _ =>
                     (HttpStatusCode.InternalServerError, "An unexpected server error occurred.")
