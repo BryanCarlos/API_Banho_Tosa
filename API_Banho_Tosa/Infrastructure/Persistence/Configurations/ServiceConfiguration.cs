@@ -14,6 +14,10 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
                    .HasColumnName("service_id")
                    .UseIdentityColumn();
 
+            builder.Property(s => s.Uuid)
+                   .HasColumnName("service_uuid")
+                   .IsRequired();
+
             builder.Property(s => s.ServiceDate)
                    .HasColumnName("service_date")
                    .IsRequired();

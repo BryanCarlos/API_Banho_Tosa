@@ -2,6 +2,7 @@ using API_Banho_Tosa.API.Services;
 using API_Banho_Tosa.Application.AnimalTypes.Services;
 using API_Banho_Tosa.Application.Auth.Interfaces;
 using API_Banho_Tosa.Application.Auth.Services;
+using API_Banho_Tosa.Application.AvailableServices.Services;
 using API_Banho_Tosa.Application.Breeds.Services;
 using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Application.Owners.Services;
@@ -207,6 +208,9 @@ namespace API_Banho_Tosa
 
             builder.Services.AddScoped<IServiceStatusRepository, ServiceStatusRepository>();
             builder.Services.AddScoped<IServiceStatusService, ServiceStatusService>();
+
+            builder.Services.AddScoped<IAvailableServiceRepository, AvailableServiceRepository>();
+            builder.Services.AddScoped<IAvailableServiceService, AvailableServiceService>();
         }
     }
 }
