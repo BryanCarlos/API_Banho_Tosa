@@ -10,6 +10,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("available_services");
 
+            builder.HasQueryFilter(avs => avs.DeletedAt == null);
+
             builder.Property(avs => avs.Id)
                    .HasColumnName("available_service_id")
                    .UseIdentityColumn();
