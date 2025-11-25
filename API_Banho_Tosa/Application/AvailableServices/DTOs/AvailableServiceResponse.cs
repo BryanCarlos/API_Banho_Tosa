@@ -5,7 +5,10 @@ namespace API_Banho_Tosa.Application.AvailableServices.DTOs
     public record AvailableServiceResponse
     (
         [property:JsonPropertyName("id")]
-        Guid Id,
+        int Id,
+
+        [property:JsonPropertyName("uuid")]
+        Guid Uuid,
         
         [property:JsonPropertyName("description")]
         string Description,
