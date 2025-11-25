@@ -8,6 +8,7 @@ namespace API_Banho_Tosa.Application.AvailableServices.Mappers
         public static AvailableServiceResponse ToResponse(this AvailableService availableService)
         {
             return new AvailableServiceResponse(
+                availableService.Id,
                 availableService.Uuid,
                 availableService.Description,
                 availableService.ServiceDurationMinutes
