@@ -48,23 +48,35 @@ namespace API_Banho_Tosa.Domain.Entities
         private Pet(string name, int breedId, int petSizeId, DateTime? birthDate)
         {
             ValidateName(name);
-            if (breedId <= 0) throw new ArgumentException("Breed ID is required.");
-            if (petSizeId <= 0) throw new ArgumentException("Pet Size ID is required.");
+            if (breedId <= 0) throw new ArgumentException($"Breed ID {breedId} is invalid. Must be a value greater than 0.");
+            if (petSizeId <= 0) throw new ArgumentException($"Pet Size ID {petSizeId} is invalid. Must be a value greater than 0.");
 
             this.Id = Guid.CreateVersion7();
-            this.Name = name;
+            this.Name = name.Trim();
             this.BreedId = breedId;
             this.PetSizeId = petSizeId;
             this.BirthDate = birthDate;
 
             var now = DateTime.UtcNow;
             this.CreatedAt = now;
-            this.DeletedAt = now;
+            this.UpdatedAt = now;
         }
 
         public static Pet Create(string name, int breedId, int petSizeId, DateTime? birthDate)
         {
             return new Pet(name, breedId, petSizeId, birthDate);
+        }
+
+        public void SetBreed(Breed breed)
+        {
+            this.BreedId = breed.Id;
+            this.Breed = breed;
+        }
+
+        public void SetPetSize(PetSize petSize)
+        {
+            this.PetSizeId = petSize.Id;
+            this.PetSize = petSize;
         }
 
         private int? CalculateAge()
@@ -88,6 +100,11 @@ namespace API_Banho_Tosa.Domain.Entities
 
         public void Delete()
         {
+            if (this.IsDeleted())
+            {
+                throw new InvalidOperationException("Pet already deleted.");
+            }
+
             this.DeletedAt = DateTime.UtcNow;
             MarkAsUpdated();
         }
@@ -103,6 +120,34 @@ namespace API_Banho_Tosa.Domain.Entities
             {
                 throw new ArgumentException("The pet name cannot be null or empty.");
             }
+        }
+
+        public void Update(string name, int breedId, int petSizeId, DateTime? latestVisit, DateTime? birthDate)
+        {
+            ValidateName(name);
+            this.Name = name;
+            this.BreedId = breedId;
+            this.PetSizeId = petSizeId;
+            this.LatestVisit = latestVisit;
+            this.BirthDate = birthDate;
+
+            this.MarkAsUpdated();
+        }
+
+        public void Reactivate()
+        {
+            if (!this.IsDeleted())
+            {
+                throw new InvalidOperationException("Pet already active.");
+            }
+
+            this.DeletedAt = null;
+            this.MarkAsUpdated();
+        }
+
+        private bool IsDeleted()
+        {
+            return this.DeletedAt.HasValue;
         }
     }
 }
