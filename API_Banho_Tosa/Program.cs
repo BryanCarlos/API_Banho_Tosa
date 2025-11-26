@@ -7,6 +7,7 @@ using API_Banho_Tosa.Application.Breeds.Services;
 using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Application.Owners.Services;
 using API_Banho_Tosa.Application.PaymentStatuses.Services;
+using API_Banho_Tosa.Application.Pets.Services;
 using API_Banho_Tosa.Application.PetSizes.Services;
 using API_Banho_Tosa.Application.ServicePrices.Services;
 using API_Banho_Tosa.Application.ServiceStatuses.Services;
@@ -215,6 +216,9 @@ namespace API_Banho_Tosa
 
             builder.Services.AddScoped<IServicePriceRepository, ServicePriceRepository>();
             builder.Services.AddScoped<IServicePriceService, ServicePriceService>();
+
+            builder.Services.AddScoped<IPetRepository, PetRepository>();
+            builder.Services.AddScoped<IPetService, PetService>();
         }
     }
 }
