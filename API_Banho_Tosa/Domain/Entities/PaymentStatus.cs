@@ -8,9 +8,9 @@
 
         private PaymentStatus() { }
 
-        public static PaymentStatus Create(string description)
+        public static PaymentStatus Create(string description, int? id = 0)
         {
-            return new PaymentStatus { Description = ValidateDescription(description) };
+            return new PaymentStatus { Description = ValidateDescription(description), Id = id ?? 0 };
         }
 
         public void UpdateDescription(string description)

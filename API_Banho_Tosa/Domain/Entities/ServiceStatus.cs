@@ -9,13 +9,14 @@ namespace API_Banho_Tosa.Domain.Entities
 
         private ServiceStatus() { }
 
-        public static ServiceStatus Create(string description)
+        public static ServiceStatus Create(string description, int? id = 0)
         {
             var treatedDescription = ValidateDescription(description);
 
             return new ServiceStatus
             {
-                Description = treatedDescription
+                Description = treatedDescription,
+                Id = id ?? 0
             };
         }
 

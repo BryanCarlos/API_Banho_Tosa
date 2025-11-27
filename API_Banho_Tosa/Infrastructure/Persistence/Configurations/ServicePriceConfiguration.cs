@@ -12,6 +12,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
 
             builder.HasKey(sp => new { sp.AvailableServiceId, sp.PetSizeId });
 
+            builder.HasQueryFilter(sp => sp.AvailableService.DeletedAt == null);
+
             builder.HasOne(sp => sp.AvailableService)
                    .WithMany(avs => avs.ServicePrices)
                    .HasForeignKey(sp => sp.AvailableServiceId);

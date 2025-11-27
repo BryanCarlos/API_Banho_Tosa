@@ -22,6 +22,8 @@ namespace API_Banho_Tosa.Infrastructure.Persistence
         public DbSet<ServiceStatus> ServiceStatuses { get; set; }
         public DbSet<AvailableService> AvailableServices { get; set; }
         public DbSet<ServicePrice> ServicePrices { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<ServiceItem> ServiceItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

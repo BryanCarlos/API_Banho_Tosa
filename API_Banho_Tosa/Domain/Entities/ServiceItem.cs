@@ -15,5 +15,28 @@
 
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
+
+        public decimal TotalItem => this.Quantity * this.PriceAtTheTime;
+
+        private ServiceItem() { }
+
+        public static ServiceItem Create(int availableServiceId, decimal price, int quantity)
+        {
+            if (quantity <= 0)
+            {
+                throw new ArgumentException("The quantity must be greater than zero.");
+            }
+
+            var now = DateTime.UtcNow;
+
+            return new ServiceItem
+            {
+                AvailableServiceId = availableServiceId,
+                PriceAtTheTime = price,
+                Quantity = quantity, // <-- Agora preenchemos corretamente
+                CreatedAt = now,
+                UpdatedAt = now
+            };
+        }
     }
 }
