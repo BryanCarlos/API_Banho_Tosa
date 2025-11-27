@@ -1,4 +1,6 @@
-﻿using API_Banho_Tosa.Domain.Entities;
+﻿using API_Banho_Tosa.Domain.Common.Extensions;
+using API_Banho_Tosa.Domain.Entities;
+using API_Banho_Tosa.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,6 +29,12 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
                    .HasForeignKey(s => s.PaymentStatusId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(
+                PaymentStatus.Create(PaymentStatusEnum.Pendente.GetDescription(), (int)PaymentStatusEnum.Pendente),
+                PaymentStatus.Create(PaymentStatusEnum.Pago.GetDescription(), (int)PaymentStatusEnum.Pago),
+                PaymentStatus.Create(PaymentStatusEnum.Cancelado.GetDescription(), (int)PaymentStatusEnum.Cancelado)
+            );
         }
     }
 }

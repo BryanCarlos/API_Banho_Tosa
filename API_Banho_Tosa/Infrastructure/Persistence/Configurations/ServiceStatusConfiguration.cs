@@ -1,4 +1,6 @@
-﻿using API_Banho_Tosa.Domain.Entities;
+﻿using API_Banho_Tosa.Domain.Common.Extensions;
+using API_Banho_Tosa.Domain.Entities;
+using API_Banho_Tosa.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,6 +29,12 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Configurations
                    .HasForeignKey(s => s.ServiceStatusId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(
+                ServiceStatus.Create(ServiceStatusEnum.Agendado.GetDescription(), (int)ServiceStatusEnum.Agendado),
+                ServiceStatus.Create(ServiceStatusEnum.Concluido.GetDescription(), (int)ServiceStatusEnum.Concluido),
+                ServiceStatus.Create(ServiceStatusEnum.Cancelado.GetDescription(), (int)ServiceStatusEnum.Cancelado)
+            );
         }
     }
 }
