@@ -2,13 +2,16 @@
 using API_Banho_Tosa.Application.AvailableServices.Services;
 using API_Banho_Tosa.Application.ServicePrices.DTOs;
 using API_Banho_Tosa.Application.ServicePrices.Services;
+using API_Banho_Tosa.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
 {
-    [Route("api/available-services")]
+    [Authorize]
     [ApiController]
+    [Route("api/available-services")]
     public class AvailableServiceController(
         IAvailableServiceService availableServiceService,
         IServicePriceService servicePriceService) : ControllerBase
@@ -20,6 +23,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpGet("deleted")]
         public async Task<IActionResult> SearchDeletedAvailableServices([FromQuery] AvailableServiceFilterQuery filter)
         {
@@ -27,6 +31,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateAvailableService([FromBody] CreateAvailableServiceRequest request)
         {
@@ -45,6 +50,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateAvailableService([FromRoute] Guid id, [FromBody] UpdateAvailableServiceRequest request)
         {
@@ -52,6 +58,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteAvailableService([FromRoute] Guid id)
         {
@@ -59,6 +66,7 @@ namespace API_Banho_Tosa.API.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPatch("{id:guid}/reactivate")]
         public async Task<IActionResult> ReactivateAvailableService([FromRoute] Guid id)
         {
@@ -73,6 +81,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPost("{id:guid}/prices")]
         public async Task<IActionResult> AddServicePrice([FromRoute] Guid id, [FromBody] AddServicePriceRequest request)
         {
@@ -80,6 +89,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id:guid}/prices/{petSizeId:int}")]
         public async Task<IActionResult> DeleteServicePrice([FromRoute] Guid id, [FromRoute] int petSizeId)
         {
@@ -87,6 +97,7 @@ namespace API_Banho_Tosa.API.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = AppRoles.Admin)] 
         [HttpPut("{id:guid}/prices/{petSizeId:int}")]
         public async Task<IActionResult> UpdateServicePrice([FromRoute] Guid id, [FromRoute] int petSizeId, [FromBody] UpdatePriceRequest request)
         {

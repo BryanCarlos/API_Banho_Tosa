@@ -59,7 +59,6 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(archivedOwners);
         }
 
-        [Authorize(Roles = AppRoles.Admin)]
         [HttpPut("{uuid}")]
         public async Task<IActionResult> UpdateOwner([FromRoute] Guid uuid, [FromBody] OwnerRequest request)
         {

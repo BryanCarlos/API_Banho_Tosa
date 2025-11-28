@@ -1,11 +1,14 @@
 ﻿using API_Banho_Tosa.Application.PaymentStatuses.DTOs;
 using API_Banho_Tosa.Application.PaymentStatuses.Services;
+using API_Banho_Tosa.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
 {
-    [Route("api/payment-statuses")]
+    [Authorize]
     [ApiController]
+    [Route("api/payment-statuses")]
     public class PaymentStatusController(IPaymentStatusService paymentStatusService) : ControllerBase
     {
         [HttpGet]
@@ -22,6 +25,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(paymentStatus);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreatePaymentStatus([FromBody] CreatePaymentStatusRequest request)
         {
@@ -33,6 +37,7 @@ namespace API_Banho_Tosa.API.Controllers
             );
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> UpdatePaymentStatus([FromRoute] int id, [FromBody] UpdatePaymentStatusRequest request)
         {
@@ -40,6 +45,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(paymentStatus);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePaymentStatus([FromRoute] int id)
         {

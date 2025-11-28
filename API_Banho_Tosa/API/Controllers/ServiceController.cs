@@ -1,16 +1,14 @@
-﻿using API_Banho_Tosa.Application.PaymentStatuses.DTOs;
-using API_Banho_Tosa.Application.Services.DTOs;
+﻿using API_Banho_Tosa.Application.Services.DTOs;
 using API_Banho_Tosa.Application.Services.Services;
-using API_Banho_Tosa.Application.ServiceStatuses.DTOs;
 using API_Banho_Tosa.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
 {
-    [Route("api/services")]
+    [Authorize]
     [ApiController]
+    [Route("api/services")]
     public class ServiceController(IServiceService serviceService) : ControllerBase
     {
         private const string GetServiceByIdRoute = "GetServiceById";
@@ -22,6 +20,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpGet("deleted")]
         public async Task<IActionResult> SearchDeletedServices([FromQuery] ServiceFilterQuery filter)
         {
@@ -69,7 +68,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
-
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteService([FromRoute] Guid id)
         {
@@ -77,6 +76,7 @@ namespace API_Banho_Tosa.API.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPatch("{id:guid}/reactivate")]
         public async Task<IActionResult> ReactivateService([FromRoute] Guid id)
         {

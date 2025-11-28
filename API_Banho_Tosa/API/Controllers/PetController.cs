@@ -1,12 +1,15 @@
 ﻿using API_Banho_Tosa.Application.Pets.DTOs;
 using API_Banho_Tosa.Application.Pets.Services;
+using API_Banho_Tosa.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
 {
-    [Route("api/pets")]
+    [Authorize]
     [ApiController]
+    [Route("api/pets")]
     public class PetController(IPetService petService) : ControllerBase
     {
         [HttpGet]
@@ -16,6 +19,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpGet("deleted")]
         public async Task<IActionResult> SearchDeletedPets([FromQuery] PetFilterQuery filter)
         {
@@ -30,6 +34,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeletePet([FromRoute] Guid id)
         {
@@ -44,6 +49,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPatch("{id:guid}/reactivate")]
         public async Task<IActionResult> ReactivatePet([FromRoute] Guid id)
         {

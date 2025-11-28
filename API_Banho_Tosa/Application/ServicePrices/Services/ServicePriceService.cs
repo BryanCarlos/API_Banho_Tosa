@@ -1,4 +1,5 @@
 ﻿using API_Banho_Tosa.Application.Common.Exceptions;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Application.ServicePrices.DTOs;
 using API_Banho_Tosa.Application.ServicePrices.Mappers;
 using API_Banho_Tosa.Domain.Entities;
@@ -9,7 +10,9 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
     public class ServicePriceService(
         IServicePriceRepository servicePriceRepository,
         IAvailableServiceRepository availableServiceRepository,
-        IPetSizeRepository petSizeRepository) : IServicePriceService
+        IPetSizeRepository petSizeRepository,
+        ICurrentUserService currentUserService,
+        ILogger<ServicePriceService> logger) : IServicePriceService
     {
         public async Task<ServicePriceResponse> AddServicePriceAsync(Guid id, AddServicePriceRequest request)
         {
@@ -17,18 +20,26 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
             var petSizeExist = await petSizeRepository.GetPetSizeByIdAsync(request.PetSizeId);
 
             var errorMessage = new List<string>();
+            var logErrors = new List<string>();
+            var logArgs = new List<string>();
 
             if (serviceAvailable is null)
             {
                 errorMessage.Add($"Available service with ID {id} doesn't exist.");
+                logErrors.Add("available service with ID {AvailableServiceId} doesn't exist");
+                logArgs.Add(id.ToString());
             }
             if (petSizeExist is null)
             {
                 errorMessage.Add($"Pet size with ID {request.PetSizeId} doesn't exist.");
+                logErrors.Add("pet size with ID {PetSizeId} doesn't exist");
+                logArgs.Add(request.PetSizeId.ToString());
             }
 
             if (errorMessage.Count > 0)
             {
+                var logMessage = $"Failed to add a new service price because {string.Join(" and ", logErrors)}.";
+                logger.LogWarning(logMessage, logArgs);
                 throw new KeyNotFoundException(string.Join(" | ", errorMessage));
             }
 
@@ -45,6 +56,14 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
             servicePrice.UpdateAvailableService(serviceAvailable);
             servicePrice.UpdatePetSize(petSizeExist!);
 
+            logger.LogInformation(
+                "New service price added for service '{AvailableServiceName}' and pet size ID {PetSizeId} was created by {RequestingUserId} (Name: {RequestingUsername}",
+                serviceAvailable.Description,
+                petSizeExist!.Id,
+                currentUserService.UserId.ToString() ?? "N/A",
+                currentUserService.Username ?? "N/A"
+            );
+
             return servicePrice.ToResponse();
         }
 
@@ -54,6 +73,11 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
 
             if (servicePriceExist)
             {
+                logger.LogWarning(
+                    "Service price already defined for service with ID {AvailableServiceId} and pet size with ID {PetSizeId}.",
+                    request.AvailableServiceId.ToString(),
+                    request.PetSizeId.ToString()
+                );
                 throw new DuplicateItemException($"Service price already defined for service with ID {request.AvailableServiceId} and pet size with ID {request.PetSizeId}.");
             }
 
@@ -61,18 +85,26 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
             var petSizeExist = await petSizeRepository.GetPetSizeByIdAsync(request.PetSizeId);
 
             var errorMessage = new List<string>();
+            var logErrors = new List<string>();
+            var logArgs = new List<string>();
 
             if (availableServiceExist is null)
             {
                 errorMessage.Add($"Available service with ID {request.AvailableServiceId} doesn't exist.");
+                logErrors.Add("available service with ID {AvailableServiceId} doesn't exist");
+                logArgs.Add(request.AvailableServiceId.ToString());
             }
             if (petSizeExist is null)
             {
                 errorMessage.Add($"Pet size with ID {request.PetSizeId} doesn't exist.");
+                logErrors.Add("pet size with ID {PetSizeId} doesn't exist");
+                logArgs.Add(request.PetSizeId.ToString());
             }
 
             if (errorMessage.Count > 0)
             {
+                var logMessage = $"Failed to create a new service price because {string.Join(" and ", logErrors)}.";
+                logger.LogWarning(logMessage, logArgs);
                 throw new KeyNotFoundException(string.Join(" | ", errorMessage));
             }
 
@@ -83,6 +115,14 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
 
             servicePrice.UpdateAvailableService(availableServiceExist!);
             servicePrice.UpdatePetSize(petSizeExist!);
+
+            logger.LogInformation(
+                "New service price created for service with ID '{AvailableServiceId}' and pet size ID {PetSizeId} was created by {RequestingUserId} (Name: {RequestingUsername}",
+                request.AvailableServiceId,
+                petSizeExist!.Id,
+                currentUserService.UserId.ToString() ?? "N/A",
+                currentUserService.Username ?? "N/A"
+            );
 
             return servicePrice.ToResponse();
         }
@@ -106,6 +146,7 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
 
             if (serviceAvailable is null)
             {
+                logger.LogWarning("Service with ID {ServiceAvailableId} doesn't exist.", serviceId.ToString());
                 throw new KeyNotFoundException("Service doesn't exist.");
             }
 
@@ -113,6 +154,11 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
 
             if (servicePrice is null)
             {
+                logger.LogWarning(
+                    "Price is not set for service with ID {ServiceAvailableId} and pet size with ID {PetSizeId}.", 
+                    serviceId.ToString(),
+                    petSizeId.ToString()
+                );
                 throw new KeyNotFoundException($"Price is not set for service with ID {serviceId.ToString().Substring(0, 8)} pet size with ID {petSizeId}.");
             }
 
@@ -123,6 +169,13 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
         public async Task<IEnumerable<ServicePriceResponse>> GetServicePricesByServiceAsync(Guid serviceId)
         {
             var servicePrices = await servicePriceRepository.GetAllByServiceUuidAsync(serviceId);
+
+            logger.LogInformation(
+                "Search for prices for the service with ID {ServiceAvailableId} retuned {PricesCount} results.",
+                serviceId.ToString(),
+                servicePrices.Count().ToString()
+            );
+
             return servicePrices.Select(sp => sp.ToResponse());
         }
 
@@ -147,6 +200,7 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
 
             if (serviceAvailable is null)
             {
+                logger.LogWarning("Attempted to update an service price info with ID {ServicePriceId} that was not found.", id.ToString());
                 throw new KeyNotFoundException("Service doesn't exist.");
             }
 
@@ -154,11 +208,35 @@ namespace API_Banho_Tosa.Application.ServicePrices.Services
 
             if (servicePrice is null)
             {
+                logger.LogWarning(
+                    "Price is not set for service with ID {ServiceAvailableId} and pet size with ID {PetSizeId}.",
+                    serviceAvailable.Id.ToString(),
+                    petSizeId.ToString()
+                );
                 throw new KeyNotFoundException($"Price is not set for service with ID {id.ToString().Substring(0, 8)} pet size with ID {petSizeId}.");
             }
 
+            var oldData = new
+            {
+                Price = servicePrice.Price
+            };
+
+            var newData = new
+            {
+                Price = request.Price
+            };
+
             servicePrice.UpdatePrice(request.Price);
             await servicePriceRepository.SaveChangesAsync();
+
+            logger.LogInformation(
+                "Service price for service {AvailableServiceName} and pet size ID {PetSizeId} updated successfully by user {RequestingUserId} (Name: {RequestingUserName}). Changes {@Changes}",
+                serviceAvailable.Description,
+                petSizeId,
+                currentUserService.UserId.ToString() ?? "N/A",
+                currentUserService.Username ?? "N/A",
+                new { Old = oldData, New = newData }
+            );
 
             return servicePrice.ToResponse();
         }

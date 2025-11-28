@@ -1,12 +1,14 @@
 ﻿using API_Banho_Tosa.Application.ServiceStatuses.DTOs;
 using API_Banho_Tosa.Application.ServiceStatuses.Services;
-using Microsoft.AspNetCore.Http;
+using API_Banho_Tosa.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Banho_Tosa.API.Controllers
 {
-    [Route("api/service-statuses")]
+    [Authorize]
     [ApiController]
+    [Route("api/service-statuses")]
     public class ServiceStatusController(IServiceStatusService serviceStatusService) : ControllerBase
     {
         [HttpGet]
@@ -16,6 +18,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateServiceStatus([FromRoute] int id, [FromBody] UpdateServiceStatusRequest request)
         {
@@ -23,6 +26,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateServiceStatus([FromBody] CreateServiceStatusRequest request)
         {
@@ -41,6 +45,7 @@ namespace API_Banho_Tosa.API.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = AppRoles.Admin)]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteServiceStatus([FromRoute] int id)
         {
