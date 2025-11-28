@@ -16,7 +16,7 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Repositories
 
         public Task<User?> GetUserByConfirmationTokenAsync(string token)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.EmailConfirmationToken == token);
+            return _context.Users.Include(user => user.Roles).FirstOrDefaultAsync(u => u.EmailConfirmationToken == token);
         }
 
         public async Task<User?> GetUserByEmailAsync(Email email)
@@ -33,7 +33,7 @@ namespace API_Banho_Tosa.Infrastructure.Persistence.Repositories
 
         public Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
         {
-            return _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            return _context.Users.Include(user => user.Roles).FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
         }
 
         public void InsertUser(User user)
