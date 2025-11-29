@@ -1,14 +1,10 @@
 ﻿using API_Banho_Tosa.Application.AnimalTypes.DTOs;
 using API_Banho_Tosa.Application.AnimalTypes.Services;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BanhoTosa.Application.Tests.AnimalTypes
 {
@@ -16,11 +12,22 @@ namespace BanhoTosa.Application.Tests.AnimalTypes
     {
         private readonly AnimalTypeService _sut;
         private readonly Mock<IAnimalTypeRepository> _animalTypeRepositoryMock;
+        private readonly Mock<ICurrentUserService> _currentUserServiceMock;
+        private readonly Mock<ILogger<AnimalTypeService>> _loggerMock;
 
         public AnimalTypeServiceTests()
         {
             this._animalTypeRepositoryMock = new Mock<IAnimalTypeRepository>();
-            this._sut = new AnimalTypeService(this._animalTypeRepositoryMock.Object);
+            this._currentUserServiceMock = new Mock<ICurrentUserService>();
+            this._loggerMock = new Mock<ILogger<AnimalTypeService>>();
+
+            this._currentUserServiceMock.Setup(x => x.UserId).Returns(Guid.CreateVersion7());
+            this._currentUserServiceMock.Setup(x => x.Username).Returns("TestUser");
+
+            this._sut = new AnimalTypeService(
+                this._animalTypeRepositoryMock.Object,
+                this._currentUserServiceMock.Object,
+                this._loggerMock.Object);
         }
 
         [Fact]
@@ -151,14 +158,16 @@ namespace BanhoTosa.Application.Tests.AnimalTypes
         public async Task SearchAnimalTypesAsync_WithoutQueryParams_ShouldReturnRegisteredAnimalTypes()
         {
             // Arrange
+            var filter = new SearchAnimalTypeRequest();
+
             var typesToReturn = GetSampleAnimalTypes();
 
             _animalTypeRepositoryMock
-                .Setup(repo => repo.SearchAnimalTypesAsync(It.IsAny<SearchAnimalTypeRequest>()))
+                .Setup(repo => repo.SearchAnimalTypesAsync(filter))
                 .ReturnsAsync(typesToReturn);
 
             // Act
-            var response = await _sut.SearchAnimalTypesAsync(It.IsAny<SearchAnimalTypeRequest>());
+            var response = await _sut.SearchAnimalTypesAsync(filter);
 
             // Assert
             Assert.NotNull(response);
