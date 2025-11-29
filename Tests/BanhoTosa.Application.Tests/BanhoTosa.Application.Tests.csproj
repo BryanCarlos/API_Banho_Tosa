@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\API_Banho_Tosa\API_Banho_Tosa.csproj" />
+    <ProjectReference Include="..\..\TestsHelpers\TestsHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

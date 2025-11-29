@@ -38,7 +38,7 @@ namespace API_Banho_Tosa.Application.Services.Services
 
                 if (priceEntity is null)
                 {
-                    logger.LogWarning(
+                    logger.LogError(
                         "There is no price configured for the service {ServiceAvailableId} in size {PetSizeDescription}.",
                         itemRequest.ServiceId,
                         pet.PetSize.Description
@@ -60,6 +60,7 @@ namespace API_Banho_Tosa.Application.Services.Services
             var service = Service.Create(request.PetId, request.ServiceDate, serviceItems, request.DiscountValue ?? 0, request.AdditionalCharges ?? 0);
             service.SetStatus(status!);
             service.SetPaymentStatus(paymentStatus!);
+            service.SetPet(pet);
 
             serviceRepository.AddService(service);
             await serviceRepository.SaveChangesAsync();

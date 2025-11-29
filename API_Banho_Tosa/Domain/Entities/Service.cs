@@ -101,6 +101,11 @@ namespace API_Banho_Tosa.Domain.Entities
             this.MarkAsUpdated();
         }
 
+        public void SetPet(Pet pet)
+        {
+            this.Pet = pet;
+        }
+
         public void Delete()
         {
             if (this.IsDeleted())

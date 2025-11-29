@@ -1,9 +1,12 @@
+using API_Banho_Tosa.Application.Breeds.Services;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Application.Owners.DTOs;
 using API_Banho_Tosa.Application.Owners.Mappers;
 using API_Banho_Tosa.Application.Owners.Services;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
 using API_Banho_Tosa.Domain.ValueObjects;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Numerics;
@@ -14,11 +17,16 @@ namespace BanhoTosa.Application.Tests.Owners
     {
         private readonly OwnerService _sut; // System Under Test
         private readonly Mock<IOwnerRepository> _ownerRepositoryMock;
+        private readonly Mock<ICurrentUserService> _currentUserServiceMock;
+        private readonly Mock<ILogger<OwnerService>> _loggerMock;
 
         public OwnerServiceTests()
         {
             this._ownerRepositoryMock = new Mock<IOwnerRepository>();
-            this._sut = new OwnerService(this._ownerRepositoryMock.Object);
+            this._currentUserServiceMock = new Mock<ICurrentUserService>();
+            this._loggerMock = new Mock<ILogger<OwnerService>>();
+
+            this._sut = new OwnerService(this._ownerRepositoryMock.Object, this._currentUserServiceMock.Object, this._loggerMock.Object);
         }
 
         [Fact]

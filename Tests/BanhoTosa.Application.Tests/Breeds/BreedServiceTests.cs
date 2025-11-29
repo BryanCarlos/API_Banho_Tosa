@@ -1,15 +1,11 @@
 ﻿using API_Banho_Tosa.Application.AnimalTypes.Services;
 using API_Banho_Tosa.Application.Breeds.DTOs;
 using API_Banho_Tosa.Application.Breeds.Services;
+using API_Banho_Tosa.Application.Common.Interfaces;
 using API_Banho_Tosa.Domain.Entities;
 using API_Banho_Tosa.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BanhoTosa.Application.Tests.Breeds
 {
@@ -18,13 +14,21 @@ namespace BanhoTosa.Application.Tests.Breeds
         private readonly BreedService _sut;
         private readonly Mock<IBreedRepository> _breedRepositoryMock;
         private readonly Mock<IAnimalTypeRepository> _animalTypeRepositoryMock;
+        private readonly Mock<ICurrentUserService> _currentUserServiceMock;
+        private readonly Mock<ILogger<BreedService>> _loggerMock;
 
         public BreedServiceTests()
         {
             this._breedRepositoryMock = new Mock<IBreedRepository>();
             this._animalTypeRepositoryMock = new Mock<IAnimalTypeRepository>();
 
-            this._sut = new BreedService(this._breedRepositoryMock.Object, this._animalTypeRepositoryMock.Object);
+            this._currentUserServiceMock = new Mock<ICurrentUserService>();
+            this._loggerMock = new Mock<ILogger<BreedService>>();
+
+            this._currentUserServiceMock.Setup(x => x.UserId).Returns(Guid.CreateVersion7());
+            this._currentUserServiceMock.Setup(x => x.Username).Returns("TestUser");
+
+            this._sut = new BreedService(this._breedRepositoryMock.Object, this._animalTypeRepositoryMock.Object, this._currentUserServiceMock.Object, this._loggerMock.Object);
         }
 
         [Fact]
