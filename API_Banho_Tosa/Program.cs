@@ -27,6 +27,7 @@ using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using Serilog;
 using Serilog.Debugging;
+using Serilog.Events;
 using Serilog.Sinks.Datadog.Logs;
 using System.Text;
 
@@ -42,6 +43,8 @@ namespace API_Banho_Tosa
 
             var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.Information()
+                    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                     .Enrich.FromLogContext()
                     .WriteTo.Console();
 
