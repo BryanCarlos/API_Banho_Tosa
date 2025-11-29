@@ -46,6 +46,16 @@ namespace API_Banho_Tosa.Application.Auth.Services
                 throw new UnauthorizedAccessException("Invalid username or password.");
             }
 
+            if (!user.IsEmailConfirmed)
+            {
+                _logger.LogWarning(
+                    "User {UserEmail} tried to login but has not confirmed their email yet.",
+                    user.Email.ToString()
+                );
+
+                throw new UnauthorizedAccessException("Email address not confirmed.");
+            }
+
             return await CreateAndReturnUserToken(user);
         }
 
